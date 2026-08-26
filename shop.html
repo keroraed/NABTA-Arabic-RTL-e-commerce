@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>كل المنتجات | نبته NABTA</title>
+  <meta name="description" content="تصفّح كل منتجات نبته الطبيعية — أعشاب، توابل، مكسرات، بذور، عسل وعناية طبيعية. الدفع عند الاستلام في جميع المحافظات.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #FCFAF5; color: #0E2A1B; font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font-family: inherit; }
+    ::selection { background: #176B3A; color: #FCFAF5; }
+    :focus-visible { outline: 2px solid #176B3A; outline-offset: 3px; }
+    .p-card { position: relative; display: flex; flex-direction: column; background: #FCFAF5; border: 1px solid rgba(14,42,27,.1); border-radius: 3px; overflow: hidden; transition: box-shadow .35s ease, transform .35s ease; }
+    .p-card:hover { box-shadow: 0 22px 44px rgba(14,42,27,.12); transform: translateY(-4px); }
+    .p-card:hover .p-img { transform: scale(1.06) translateY(-6px); }
+    .p-img { transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+    .chip { border: 1px solid rgba(14,42,27,.16); background: transparent; color: #2C3E30; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 9999px; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+    .chip:hover { border-color: #176B3A; color: #176B3A; }
+    .chip[aria-pressed="true"] { background: #0E2A1B; border-color: #0E2A1B; color: #FCFAF5; }
+    .btn-add { width: 100%; border: 0; cursor: pointer; background: #0E2A1B; color: #F5EBD8; font-size: 14px; font-weight: 600; padding: 13px; border-radius: 2px; transition: background .25s ease; }
+    .btn-add:hover { background: #176B3A; }
+    .btn-add:disabled { background: rgba(14,42,27,.25); cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <div data-nabta-header></div>
+
+  <!-- Page banner -->
+  <section style="position:relative;background:#F5EBD8;padding:clamp(120px,16vw,170px) clamp(16px,4vw,60px) clamp(40px,6vw,70px);overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(107,70,48,.1) .5px,transparent .5px);background-size:3px 3px;pointer-events:none"></div>
+    <div style="position:relative;max-width:1560px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6B4630;margin-bottom:18px">
+        <a href="NABTA.dc.html#home" style="opacity:.8">الرئيسية</a><span>/</span><span style="color:#176B3A;font-weight:600">كل المنتجات</span>
+      </div>
+      <h1 style="margin:0;font-size:clamp(2.1rem,5.2vw,3.8rem);line-height:1.15;font-weight:700;letter-spacing:-.02em">كل المنتجات</h1>
+      <p style="margin:18px 0 0;font-size:clamp(15px,1.4vw,18px);line-height:1.85;font-weight:300;color:#3A483D;max-width:60ch">منتجات طبيعية منتقاة ومعبّأة يدوياً. اطلب الآن وادفع عند الاستلام.</p>
+    </div>
+  </section>
+
+  <main style="max-width:1560px;margin:0 auto;padding:clamp(32px,5vw,56px) clamp(16px,4vw,60px) clamp(60px,8vw,110px)">
+
+    <!-- Category filter -->
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px)">
+      <button class="chip" data-filter="all" aria-pressed="true">كل الأقسام</button>
+      <span data-filter-chips style="display:contents"></span>
+    </div>
+
+    <p data-result-count style="margin:0 0 20px;font-size:14px;color:#6B4630"></p>
+
+    <div data-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:clamp(16px,2vw,28px)"></div>
+
+    <p data-empty style="display:none;margin:60px 0;text-align:center;font-size:16px;color:#6B4630">لا توجد منتجات في هذا القسم حالياً.</p>
+  </main>
+
+  <div data-nabta-footer></div>
+
+  <!-- toast -->
+  <div data-toast style="position:fixed;inset-inline-start:50%;transform:translateX(-50%) translateY(140%);bottom:26px;z-index:120;background:#0E2A1B;color:#F5EBD8;font-size:14px;font-weight:500;padding:14px 26px;border-radius:9999px;box-shadow:0 16px 40px rgba(14,42,27,.28);transition:transform .45s cubic-bezier(.22,.61,.36,1);pointer-events:none"></div>
+
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/nabta-shop.js"></script>
+  <script src="assets/js/nabta-chrome.js"></script>
+  <script>
+    (function () {
+      var S = window.NabtaShop;
+      NabtaChrome.mount('shop');
+
+      var grid = document.querySelector('[data-grid]');
+      var empty = document.querySelector('[data-empty]');
+      var countEl = document.querySelector('[data-result-count]');
+      var chipWrap = document.querySelector('[data-filter-chips]');
+      var toast = document.querySelector('[data-toast]');
+      var toastT;
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        clearTimeout(toastT);
+        toastT = setTimeout(function () {
+          toast.style.transform = 'translateX(-50%) translateY(140%)';
+        }, 2200);
+      }
+
+      // category chips
+      S.categories().forEach(function (c) {
+        var b = document.createElement('button');
+        b.className = 'chip';
+        b.setAttribute('data-filter', c.slug);
+        b.setAttribute('aria-pressed', 'false');
+        b.textContent = c.name;
+        chipWrap.appendChild(b);
+      });
+
+      function cardHTML(p) {
+        var out = p.stock <= 0;
+        var low = !out && p.stock <= 5;
+        return '' +
+        '<article class="p-card">' +
+          '<a href="product.html?id=' + p.id + '" style="display:block;position:relative;background:#F5EBD8;aspect-ratio:1/1;overflow:hidden">' +
+            (out ? '<span style="position:absolute;top:12px;inset-inline-start:12px;z-index:2;background:rgba(14,42,27,.9);color:#F5EBD8;font-size:11px;font-weight:700;padding:5px 12px;border-radius:9999px">نفدت الكمية</span>' : '') +
+            (low ? '<span style="position:absolute;top:12px;inset-inline-start:12px;z-index:2;background:#B08D57;color:#FCFAF5;font-size:11px;font-weight:700;padding:5px 12px;border-radius:9999px">آخر ' + p.stock + ' قطع</span>' : '') +
+            '<img class="p-img" src="' + p.images[0] + '" alt="' + p.name + '" loading="lazy" decoding="async" style="position:absolute;inset:0;margin:auto;width:80%;height:80%;object-fit:contain;filter:drop-shadow(0 14px 20px rgba(14,42,27,.16))' + (out ? ';opacity:.45' : '') + '">' +
+          '</a>' +
+          '<div style="padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">' +
+            '<p style="margin:0;font-size:12px;letter-spacing:.12em;color:#6B4630;font-weight:500">' + p.category + '</p>' +
+            '<a href="product.html?id=' + p.id + '"><h2 style="margin:0;font-size:17px;font-weight:600;line-height:1.5">' + p.name + '</h2></a>' +
+            '<p style="margin:0;font-size:13px;line-height:1.75;color:#4a5a4e;font-weight:300;flex:1">' + p.shortDesc + '</p>' +
+            '<p style="margin:4px 0 8px;font-size:19px;font-weight:700;color:#176B3A">' + S.fmt(p.price) + '</p>' +
+            '<button class="btn-add" data-add="' + p.id + '"' + (out ? ' disabled' : '') + '>' + (out ? 'غير متاح' : 'أضف إلى السلة') + '</button>' +
+          '</div>' +
+        '</article>';
+      }
+
+      function render(slug) {
+        var list = S.products().filter(function (p) { return slug === 'all' || p.categorySlug === slug; });
+        grid.innerHTML = list.map(cardHTML).join('');
+        empty.style.display = list.length ? 'none' : 'block';
+        countEl.textContent = list.length ? list.length + ' منتج' : '';
+        document.querySelectorAll('.chip').forEach(function (c) {
+          c.setAttribute('aria-pressed', String(c.getAttribute('data-filter') === slug));
+        });
+      }
+
+      // deep-link support: shop.html?cat=honey  (used by categories.html tiles)
+      var params = new URLSearchParams(location.search);
+      var initial = params.get('cat') || 'all';
+      if (initial !== 'all' && !S.categories().some(function (c) { return c.slug === initial; })) initial = 'all';
+      render(initial);
+
+      document.addEventListener('click', function (e) {
+        var chip = e.target.closest('.chip');
+        if (chip) {
+          var slug = chip.getAttribute('data-filter');
+          render(slug);
+          var url = slug === 'all' ? 'shop.html' : 'shop.html?cat=' + slug;
+          history.replaceState(null, '', url);
+          return;
+        }
+        var add = e.target.closest('[data-add]');
+        if (add && !add.disabled) {
+          var p = S.find(add.getAttribute('data-add'));
+          S.addToCart(p.id, 1);
+          showToast('تمت الإضافة إلى السلة — ' + p.name);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

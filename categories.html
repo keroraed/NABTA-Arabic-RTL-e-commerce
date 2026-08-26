@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>الأقسام الطبيعية | نبته NABTA</title>
+  <meta name="description" content="استكشف جميع أقسام نبته: أعشاب، توابل، مكسرات، بذور، عسل، صابون طبيعي، خلطات وعناية طبيعية.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #FCFAF5; color: #0E2A1B; font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button, input { font-family: inherit; }
+    ::selection { background: #176B3A; color: #FCFAF5; }
+    :focus-visible { outline: 2px solid #176B3A; outline-offset: 3px; }
+    @keyframes nbFloatB { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-8px) rotate(-1.5deg); } }
+    .cat-card:hover { box-shadow: 0 24px 48px rgba(14,42,27,.12); }
+    /* the opened product art is a desktop-hover-only layer — never fetched on touch */
+    @media (max-width: 900px), (hover: none) { .cat-opened-img { display: none !important; } }
+    /* the masalek can is a tall portrait asset — on a narrow single-column card its
+       width-driven height would tower over the fixed-height shelf and poke into the
+       content above it, so it's scaled down to fit at rest on small screens */
+    @media (max-width: 900px) { .cat-card[data-cat-type="masalek"] .cat-normal-img { width: 50% !important; } }
+  </style>
+</head>
+<body style="background:#FCFAF5;position:relative;overflow-x:hidden">
+
+  <!-- Header Navigation -->
+  <header id="main-header" style="position:fixed;inset-inline:0;top:0;z-index:90;transition:all .35s ease">
+    <div id="header-bg" style="position:absolute;inset:0;background:rgba(252,250,245,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(14,42,27,.08);box-shadow:0 4px 24px rgba(14,42,27,.04)"></div>
+    <div style="position:relative;max-width:1560px;margin:0 auto;padding:0 clamp(16px,3vw,44px);height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+      
+      <!-- Right: Logo -->
+      <a href="NABTA.dc.html#home" style="display:flex;align-items:center;gap:12px;flex:0 0 auto">
+        <img src="assets/logo.webp" alt="نبته NABTA" width="130" height="86" style="height:clamp(40px,4.2vw,50px);width:auto;object-fit:contain;display:block">
+        <span style="display:inline-block;width:1px;height:24px;background:rgba(14,42,27,.15);margin-inline-start:4px"></span>
+      </a>
+
+      <nav aria-label="التنقل الرئيسي" style="display:flex;align-items:center;gap:clamp(16px,2.2vw,36px)">
+        <a href="NABTA.dc.html#home" style="font-size:15px;font-weight:500;color:#2C3E30;padding:8px 2px;transition:color .2s" onmouseover="this.style.color='#176B3A'" onmouseout="this.style.color='#2C3E30'">الرئيسية</a>
+        <a href="NABTA.dc.html#story" style="font-size:15px;font-weight:500;color:#2C3E30;padding:8px 2px;transition:color .2s" onmouseover="this.style.color='#176B3A'" onmouseout="this.style.color='#2C3E30'">من نحن</a>
+        <a href="categories.html" style="font-size:15px;font-weight:600;color:#0E2A1B;padding:8px 2px;position:relative;border-bottom:2.5px solid #176B3A">الأقسام</a>
+        <a href="NABTA.dc.html#products" style="font-size:15px;font-weight:500;color:#2C3E30;padding:8px 2px;transition:color .2s" onmouseover="this.style.color='#176B3A'" onmouseout="this.style.color='#2C3E30'">المنتجات</a>
+        <a href="NABTA.dc.html#contact" style="font-size:15px;font-weight:500;color:#2C3E30;padding:8px 2px;transition:color .2s" onmouseover="this.style.color='#176B3A'" onmouseout="this.style.color='#2C3E30'">تواصل معنا</a>
+      </nav>
+
+      <!-- Left: Actions -->
+      <div style="display:flex;align-items:center;gap:8px;flex:0 0 auto">
+        <a href="NABTA.dc.html#products" aria-label="بحث" style="width:42px;height:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s" onmouseover="this.style.background='rgba(14,42,27,.06)'" onmouseout="this.style.background='none'">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E2A1B" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
+        </a>
+        <a href="NABTA.dc.html" aria-label="الرئيسية" style="display:inline-flex;align-items:center;gap:8px;background:#0E2A1B;color:#FCFAF5;font-size:13px;font-weight:600;padding:8px 18px;border-radius:9999px;transition:background .2s" onmouseover="this.style.background='#176B3A'" onmouseout="this.style.background='#0E2A1B'">
+          <span>العودة للرئيسية</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(180deg)"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Page Header Banner -->
+  <section style="position:relative;background:#F5EBD8;padding:clamp(120px,16vw,170px) clamp(16px,4vw,60px) clamp(50px,7vw,90px);overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(107,70,48,.1) .5px,transparent .5px);background-size:3px 3px;pointer-events:none"></div>
+    <div style="position:absolute;top:10%;inset-inline-end:5%;width:clamp(120px,14vw,220px);opacity:.18;pointer-events:none;animation:nbSway 12s ease-in-out infinite">
+      <svg viewBox="0 0 200 260" fill="none"><path d="M100 258C100 258 96 150 100 2" stroke="#B08D57" stroke-width="1.4"/><path d="M100 60c0 0 34-24 62-8-8 30-40 34-62 8Z" stroke="#0E2A1B" stroke-width="1.2"/><path d="M100 108c0 0-34-24-62-8 8 30 40 34 62 8Z" stroke="#0E2A1B" stroke-width="1.2"/><path d="M100 156c0 0 30-22 56-7-7 27-36 31-56 7Z" stroke="#0E2A1B" stroke-width="1.2"/></svg>
+    </div>
+
+    <div style="position:relative;max-width:1560px;margin:0 auto">
+      <!-- Breadcrumbs -->
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6B4630;margin-bottom:18px">
+        <a href="NABTA.dc.html#home" style="opacity:.8;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.8'">الرئيسية</a>
+        <span>/</span>
+        <span style="color:#176B3A;font-weight:600">الأقسام الطبيعية</span>
+      </div>
+
+      <div style="max-width:760px">
+        <p data-page-eyebrow style="margin:0 0 12px;font-size:clamp(11px,1.1vw,13px);letter-spacing:.34em;color:#6B4630;font-weight:500">خارطة المنتجات</p>
+        <h1 data-page-title style="margin:0;font-size:clamp(2.2rem,5.6vw,4.4rem);line-height:1.15;font-weight:700;color:#0E2A1B;letter-spacing:-.02em">جميع الأقسام الطبيعية</h1>
+        <p data-page-desc style="margin:20px 0 0;font-size:clamp(15px,1.4vw,19px);line-height:1.85;font-weight:300;color:#3A483D;text-wrap:pretty">استكشف رفوف نبته الكاملة. ثمانية أقسام رئيسية تجمع أجود أنواع الأعشاب، التوابل، المكسرات، البذور، العسل، الخلطات، والعناية الطبيعية المنتقاة بعناية.</p>
+      </div>
+
+      <!-- Quick Filter Badges -->
+      <div data-page-badges style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:clamp(28px,4vw,44px)">
+        <span style="font-size:13px;font-weight:600;color:#6B4630">الأقسام (8):</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">أعشاب</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">توابل</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">مكسرات</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">بذور</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">عسل</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">صابون طبيعي</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">خلطات طبيعية</span>
+        <span style="background:rgba(23,107,58,.12);color:#176B3A;font-size:13px;font-weight:600;padding:6px 16px;border-radius:9999px">عناية طبيعية</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Full Grid Section -->
+  <main style="max-width:1560px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(16px,4vw,60px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:clamp(20px,2.5vw,36px)">
+
+      <!-- Card 1: أعشاب -->
+      <a href="shop.html?cat=herbs" class="cat-card" data-cat-type="masalek" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(23,107,58,.14),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/masalek.webp" alt="أعشاب طبيعية" loading="lazy" style="position:absolute;bottom:9%;inset-inline:0;margin-inline:auto;width:76%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+          <div class="cat-float" style="position:absolute;inset:0;pointer-events:none;will-change:transform">
+            <img class="cat-opened-img" src="assets/products/masalek-opened.png" alt="أعشاب مفتوحة" loading="lazy" style="position:absolute;bottom:9%;inset-inline:0;margin-inline:auto;width:82%;height:auto;object-fit:contain;filter:drop-shadow(0 28px 40px rgba(14,42,27,.28));opacity:0;will-change:transform,opacity"/>
+          </div>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">أعشاب طبيعية</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#176B3A;background:rgba(23,107,58,.1);padding:3px 10px;border-radius:9999px">منتجات منتقاة</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">أوراق وزهور وبذور عشبية نقية من مصادر أصيلة، مجففة بطرق تحفظ خواصها وزيوتها الطبيعية.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 2: توابل -->
+      <a href="shop.html?cat=spices" class="cat-card" data-cat-type="cinnamon" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(107,70,48,.15),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/cinnamon.webp" alt="توابل وبهارات" loading="lazy" style="position:absolute;bottom:4%;inset-inline:0;margin-inline:auto;width:92%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+          <div class="cat-float" style="position:absolute;inset:0;pointer-events:none;will-change:transform">
+            <img class="cat-opened-img" src="assets/products/cinnamon-opened.png" alt="توابل مفتوحة" loading="lazy" style="position:absolute;bottom:2%;inset-inline:0;margin-inline:auto;width:98%;height:auto;object-fit:contain;filter:drop-shadow(0 28px 40px rgba(14,42,27,.28));opacity:0;will-change:transform,opacity"/>
+          </div>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">توابل وبهارات</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#6B4630;background:rgba(107,70,48,.1);padding:3px 10px;border-radius:9999px">نكهة أصلية</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">قرفة، هيل، فلفل، وخلطات توابل طازجة تعطي لأطباقك عبق المطبخ الشرقي الأصيل.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 3: مكسرات -->
+      <a href="shop.html?cat=nuts" class="cat-card" data-cat-type="macadamia" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(107,70,48,.14),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/macadamia.webp" alt="مكسرات فاخرة" loading="lazy" style="position:absolute;bottom:2%;inset-inline:0;margin-inline:auto;width:88%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+          <div class="cat-float" style="position:absolute;inset:0;pointer-events:none;will-change:transform">
+            <img class="cat-opened-img" src="assets/products/macadamia-opened.png" alt="مكسرات مفتوحة" loading="lazy" style="position:absolute;bottom:-2%;inset-inline:0;margin-inline:auto;width:94%;height:auto;object-fit:contain;filter:drop-shadow(0 28px 40px rgba(14,42,27,.28));opacity:0;will-change:transform,opacity"/>
+          </div>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">مكسرات فاخرة</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#176B3A;background:rgba(23,107,58,.1);padding:3px 10px;border-radius:9999px">فاخر ومقرمش</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">مكاديميا، لوز، فستق، وجوز هند منتقاة باليد ومحفوظة بعناية للحفاظ على القرمشة والقيمة الغذائية.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 4: بذور -->
+      <a href="shop.html?cat=seeds" class="cat-card" data-cat-type="pumpkin" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(23,107,58,.14),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/pumpkin-seeds.webp" alt="بذور وحبوب" loading="lazy" style="position:absolute;bottom:3%;inset-inline:0;margin-inline:auto;width:90%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+          <div class="cat-float" style="position:absolute;inset:0;pointer-events:none;will-change:transform">
+            <img class="cat-opened-img" src="assets/products/pumpkin-seeds-opened.png" alt="بذور مفتوحة" loading="lazy" style="position:absolute;bottom:1%;inset-inline:0;margin-inline:auto;width:96%;height:auto;object-fit:contain;filter:drop-shadow(0 28px 40px rgba(14,42,27,.28));opacity:0;will-change:transform,opacity"/>
+          </div>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">بذور وحبوب</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#176B3A;background:rgba(23,107,58,.1);padding:3px 10px;border-radius:9999px">طاقة طبيعية</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">بذور يقطين، شيا، كتان، وسمسم طبيعي من مزارع مختارة لتغذية صحية ومتوازنة.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 5: عسل -->
+      <a href="shop.html?cat=honey" class="cat-card" data-cat-type="honey" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(107,70,48,.16),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/black-honey.webp" alt="عسل ودبس" loading="lazy" style="position:absolute;bottom:5%;inset-inline:0;margin-inline:auto;width:84%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+          <div class="cat-float" style="position:absolute;inset:0;pointer-events:none;will-change:transform">
+            <img class="cat-opened-img" src="assets/products/black-honey-opened.png" alt="عسل مفتوح" loading="lazy" style="position:absolute;bottom:0%;inset-inline:0;margin-inline:auto;width:94%;height:auto;object-fit:contain;filter:drop-shadow(0 28px 40px rgba(14,42,27,.28));opacity:0;will-change:transform,opacity"/>
+          </div>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">عسل ودبس طبيعي</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#6B4630;background:rgba(107,70,48,.1);padding:3px 10px;border-radius:9999px">نقي 100%</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">عسل أسود صعيدي خام، دبس قصب السكر، وأعسال زهور طبيعية خالية من أي إضافات صناعية.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 6: صابون طبيعي -->
+      <a href="shop.html?cat=soap" class="cat-card" data-cat-type="soap" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(107,70,48,.13),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/olive-soap.webp" alt="صابون طبيعي" loading="lazy" style="position:absolute;bottom:17%;inset-inline:0;margin-inline:auto;width:80%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">صابون وزيوت طبيعية</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#176B3A;background:rgba(23,107,58,.1);padding:3px 10px;border-radius:9999px">صناعة يدوية</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">قطع صابون معتوقة بزيت الزيتون البكر، العسل، وفيتامين C، لتنظيف وترطيب لطيف وصحي للبشرة.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 7: خلطات طبيعية -->
+      <a href="shop.html?cat=mixes" class="cat-card" data-cat-type="makhtoom" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(23,107,58,.14),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/makhtoom.webp" alt="خلطات طبيعية" loading="lazy" style="position:absolute;bottom:2%;inset-inline:0;margin-inline:auto;width:86%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">خلطات العطارة الخاصة</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#176B3A;background:rgba(23,107,58,.1);padding:3px 10px;border-radius:9999px">تركيبات متوارثة</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">خلطات عشبية ومكسرات مجهزة بنسب دقيقة ومجربة لدعم المناعة والنشاط والراحة الجسدية.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 8: عناية طبيعية -->
+      <a href="shop.html?cat=care" class="cat-card" data-cat-type="indigo" style="position:relative;display:flex;flex-direction:column;border-radius:240px 240px 16px 16px;background:transparent;overflow:visible;box-shadow:0 12px 30px rgba(14,42,27,.05);transition:box-shadow .4s ease, border-color .4s ease;text-decoration:none">
+        <div data-cat-shelf style="position:absolute;inset:0;border-radius:240px 240px 16px 16px;background:#FCFAF5;border:1px solid rgba(14,42,27,.12);overflow:hidden;pointer-events:none">
+          <div data-cat-bg style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(23,80,140,.12),transparent);opacity:0"></div>
+        </div>
+        <div style="position:relative;height:320px;overflow:visible;pointer-events:none;z-index:3">
+          <img class="cat-normal-img" src="assets/products/indigo.webp" alt="عناية طبيعية" loading="lazy" style="position:absolute;bottom:1%;inset-inline:0;margin-inline:auto;width:88%;height:auto;object-fit:contain;filter:drop-shadow(0 20px 28px rgba(14,42,27,.2));will-change:transform,opacity"/>
+        </div>
+        <div style="position:relative;z-index:5;padding:26px 26px 28px;display:flex;flex-direction:column;flex:1;background:#FCFAF5;border-top:1px solid rgba(14,42,27,.06);border-radius:0 0 16px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0;font-size:22px;font-weight:600;color:#0E2A1B">عناية ونضارة طبيعية</h3>
+            <span style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;color:#176B3A;background:rgba(23,107,58,.1);padding:3px 10px;border-radius:9999px">نقاء مغربي</span>
+          </div>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.75;color:#4A584D;flex:1">النيلة الزرقاء الأصلية، طين مغربي، وخلاصات طبيعية لنقاء وتفتيح ونضارة البشرة والشعر.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed rgba(14,42,27,.12)">
+            <span style="font-size:14px;font-weight:600;color:#176B3A">استكشف منتجات القسم</span>
+            <svg class="cat-card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#176B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.6"><path d="M20 12H4"/><path d="m10 6-6 6 6 6"/></svg>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- Value Propositions Banner -->
+  <section style="background:#0E2A1B;color:#FCFAF5;padding:clamp(60px,8vw,100px) clamp(16px,4vw,60px);position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) .5px,transparent .5px);background-size:3px 3px;pointer-events:none"></div>
+    <div style="max-width:1560px;margin:0 auto;position:relative;z-index:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:clamp(30px,4vw,60px)">
+      <div>
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(23,107,58,.3);display:grid;place-items:center;margin-bottom:18px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.75"><path d="M12 22C12 22 12.5 13 21 12c.6 7.6-4 9.6-9 10Z"/><path d="M12 22C12 22 10.6 15.4 3 15.4c-.3 6.3 3.7 7.4 9 6.6Z"/></svg>
+        </div>
+        <h4 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#F5EBD8">أصلية ومضمونة 100%</h4>
+        <p style="margin:0;font-size:14px;line-height:1.75;color:rgba(252,250,245,.75)">جميع منتجاتنا نقية خالية من الشوائب ومستوردة أو محضرة محلياً من مصادرها الموثوقة.</p>
+      </div>
+      <div>
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(23,107,58,.3);display:grid;place-items:center;margin-bottom:18px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.75"><path d="M20 7h-7L10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/></svg>
+        </div>
+        <h4 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#F5EBD8">تعبئة محكمة ونظيفة</h4>
+        <p style="margin:0;font-size:14px;line-height:1.75;color:rgba(252,250,245,.75)">تغليف عالي الجودة يحافظ على رائحة ونكهة وطزاجة المنتج حتى وصوله إلى باب بيتك.</p>
+      </div>
+      <div>
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(23,107,58,.3);display:grid;place-items:center;margin-bottom:18px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+        </div>
+        <h4 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#F5EBD8">توصيل سريع لكافة المحافظات</h4>
+        <p style="margin:0;font-size:14px;line-height:1.75;color:rgba(252,250,245,.75)">خدمة شحن سريعة ومتابعة دقيقة لكل طلب مع خيارات دفع متعددة عند الاستلام.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:#0E2A1B;color:#F5EBD8;padding:clamp(60px,8vw,100px) clamp(16px,3vw,44px) 30px;border-top:1px solid rgba(245,235,216,.1)">
+    <div style="max-width:1560px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:40px;padding-bottom:50px;border-bottom:1px solid rgba(245,235,216,.1)">
+      <div>
+        <img src="assets/logo.webp" alt="نبته NABTA" width="130" height="86" style="height:46px;width:auto;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:18px">
+        <p style="margin:0;font-size:14px;line-height:1.85;color:rgba(245,235,216,.75);max-width:32ch">منتجات طبيعية مختارة بعناية، من العطارة الأصيلة بروح عصرية تناسب حياتك اليومية.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 16px;font-size:13px;letter-spacing:.2em;color:#B08D57;font-weight:600">الأقسام</p>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:14px;color:rgba(245,235,216,.8)">
+          <li><a href="NABTA.dc.html#products" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">أعشاب طبيعية</a></li>
+          <li><a href="NABTA.dc.html#products" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">توابل وبهارات</a></li>
+          <li><a href="NABTA.dc.html#products" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">مكسرات وبذور</a></li>
+          <li><a href="NABTA.dc.html#products" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">صابون وعناية طبيعية</a></li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin:0 0 16px;font-size:13px;letter-spacing:.2em;color:#B08D57;font-weight:600">روابط سريعة</p>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:14px;color:rgba(245,235,216,.8)">
+          <li><a href="NABTA.dc.html#home" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">الرئيسية</a></li>
+          <li><a href="NABTA.dc.html#story" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">من نحن</a></li>
+          <li><a href="categories.html" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">الأقسام</a></li>
+          <li><a href="NABTA.dc.html#products" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">المنتجات الأكثر طلباً</a></li>
+          <li><a href="NABTA.dc.html#contact" style="transition:color .2s" onmouseover="this.style.color='#B08D57'" onmouseout="this.style.color='rgba(245,235,216,.8)'">تواصل معنا</a></li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin:0 0 16px;font-size:13px;letter-spacing:.2em;color:#B08D57;font-weight:600">خدمة العملاء</p>
+        <p style="margin:0 0 8px;font-size:14px;color:rgba(245,235,216,.8)">القاهرة، جمهورية مصر العربية</p>
+        <p style="margin:0 0 8px;font-size:14px;color:rgba(245,235,216,.8)">info@nabta-eg.com</p>
+        <p style="margin:0;font-size:14px;color:rgba(245,235,216,.8)">+20 100 000 0000</p>
+      </div>
+    </div>
+    <div style="max-width:1560px;margin:24px auto 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:rgba(245,235,216,.5)">
+      <p style="margin:0">© 2026 NABTA نبته — جميع الحقوق محفوظة</p>
+      <div style="display:flex;gap:18px">
+        <a href="NABTA.dc.html#home" style="transition:color .2s" onmouseover="this.style.color='#F5EBD8'" onmouseout="this.style.color='rgba(245,235,216,.5)'">الرئيسية</a>
+        <a href="categories.html" style="color:#B08D57">الأقسام</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    if (window.Lenis) {
+      const lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+    }
+
+    /* ---------- category shelf breakout ----------
+       Each category behaves like a different physical object on the shelf.
+       normal = how the closed pack settles back when the product leaves it.
+       from -> peak -> settle = the opened product emerging, overshooting, then
+       coming to rest. peak/settle are two keyframes of one tween, so the
+       overshoot reads as weight rather than as a bounce easing. */
+    const TILE_MOTION = {
+      /* أعشاب — the container opens and the herbal mix lifts straight out of the shelf */
+      masalek: {
+        normal: {scale: .88, y: 16, rotation: -3.4, opacity: .06},
+        from:   {scale: .70, y: 52, rotation: 6, x: 0},
+        peak:   {scale: 1.22, y: -68, rotation: -3.8, x: 0, duration: .42},
+        settle: {scale: 1.16, y: -57, rotation: -2.2, x: 0, duration: .32}
+      },
+      /* توابل — the sticks loosen and drift outward as they rise */
+      cinnamon: {
+        normal: {scale: .90, y: 12, rotation: 2.2, opacity: .06},
+        from:   {scale: .76, y: 34, rotation: -6, x: 0},
+        peak:   {scale: 1.20, y: -39, rotation: 5, x: 0, duration: .44},
+        settle: {scale: 1.14, y: -31, rotation: 3.2, x: 0, duration: .34}
+      },
+      /* مكسرات — the pack bursts open and throws the nuts forward */
+      macadamia: {
+        normal: {scale: .86, y: 14, rotation: 2.6, opacity: .05},
+        from:   {scale: .66, y: 41, rotation: -8, x: 0},
+        peak:   {scale: 1.26, y: -53, rotation: 3, x: 0, duration: .36},
+        settle: {scale: 1.17, y: -43, rotation: 1.6, x: 0, duration: .34}
+      },
+      /* بذور — the bowl tips and the seeds spill toward the viewer: settles lower, but larger */
+      pumpkin: {
+        normal: {scale: .90, y: 9, rotation: -3, opacity: .08},
+        from:   {scale: .78, y: 28, rotation: 5, x: 0},
+        peak:   {scale: 1.20, y: -39, rotation: -4, x: 0, duration: .40},
+        settle: {scale: 1.26, y: -21, rotation: -2.2, x: 0, duration: .36}
+      },
+      /* عسل — the jar opens and pours diagonally out of the card */
+      honey: {
+        normal: {scale: .88, y: 9, rotation: 4, opacity: .07},
+        from:   {scale: .74, y: 25, rotation: -6, x: 0},
+        peak:   {scale: 1.19, y: -41, rotation: 4, x: 0, duration: .42},
+        settle: {scale: 1.23, y: -25, rotation: 2.4, x: 0, duration: .38}
+      }
+    };
+
+    /* One paused timeline per card, built once: play() on enter, reverse() on leave. */
+    function buildTileTimeline(gsap, card, calm) {
+      const normal = card.querySelector('.cat-normal-img');
+      const opened = card.querySelector('.cat-opened-img');
+      const bg = card.querySelector('[data-cat-bg]');
+      const arrow = card.querySelector('.cat-card-arrow');
+      const float = card.querySelector('.cat-float');
+      if (!normal) return null;
+      const m = TILE_MOTION[card.getAttribute('data-cat-type')];
+
+      gsap.set(normal, { transformOrigin: '50% 94%' });
+      if (float) gsap.set(float, { x: 0, y: 0, rotation: 0, transformOrigin: '50% 92%' });
+      if (opened) {
+        gsap.set(opened, { transformOrigin: '50% 88%' });
+        gsap.set(opened, calm || !m ? { opacity: 0, scale: .94, y: 14, rotation: 0, x: 0 } : Object.assign({ opacity: 0 }, m.from));
+      }
+
+      const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+      if (bg) tl.to(bg, { opacity: 1, duration: .5, ease: 'power2.out' }, 0);
+      if (arrow) tl.to(arrow, { opacity: 1, x: -4, duration: .4, ease: 'power2.out' }, .06);
+
+      /* no opened artwork, or motion dialled down: a plain, gentle lift */
+      if (!opened || !m || calm) {
+        if (opened) {
+          tl.to(normal, { opacity: 0, duration: .3, ease: 'power2.inOut' }, .06)
+            .to(opened, { opacity: 1, scale: 1.04, y: -12, duration: .45, ease: 'power2.out' }, 0);
+        } else {
+          tl.to(normal, { scale: 1.06, y: -16, duration: .5 }, 0);
+        }
+        return tl;
+      }
+
+      /* the closed pack sinks back into the shelf and hands over ... */
+      tl.to(normal, { scale: m.normal.scale, y: m.normal.y, rotation: m.normal.rotation, duration: .42 }, 0)
+        .to(normal, { opacity: m.normal.opacity, duration: .3, ease: 'power2.inOut' }, .12)
+        /* ... to the opened product rising out from behind it */
+        .to(opened, { opacity: 1, duration: .26, ease: 'power1.out' }, .05)
+        .to(opened, { keyframes: [
+          Object.assign({ ease: 'power3.out' }, m.peak),
+          Object.assign({ ease: 'power2.inOut' }, m.settle)
+        ] }, .05);
+      return tl;
+    }
+
+    /* the opened artwork is heavy, so warm it just before the grid reaches the
+       viewport: the first hover then paints with no fetch and no decode */
+    function preloadOpenedArt() {
+      const srcs = [].map.call(document.querySelectorAll('.cat-opened-img'), i => i.getAttribute('src')).filter(Boolean);
+      if (!srcs.length) return;
+      let done = false;
+      const run = () => {
+        if (done) return;
+        done = true;
+        srcs.forEach(src => {
+          const img = new Image();
+          img.decoding = 'async';
+          img.src = src;
+          img.decode && img.decode().catch(() => {});
+        });
+      };
+      const grid = document.querySelector('.cat-card');
+      if (grid && window.IntersectionObserver) {
+        const obs = new IntersectionObserver((entries, o) => {
+          if (entries.some(en => en.isIntersecting)) { run(); o.disconnect(); }
+        }, { rootMargin: '900px 0px' });
+        obs.observe(grid);
+      } else {
+        setTimeout(run, 1800);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const gsap = window.gsap;
+      if (!gsap) return;
+
+      // Page Header entrance transitions
+      gsap.from('[data-page-eyebrow]', { opacity: 0, y: 22, duration: 0.8, ease: 'power3.out' });
+      gsap.from('[data-page-title]', { opacity: 0, y: 28, duration: 0.9, delay: 0.1, ease: 'power3.out' });
+      gsap.from('[data-page-desc]', { opacity: 0, y: 22, duration: 0.8, delay: 0.2, ease: 'power3.out' });
+      gsap.from('[data-page-badges] > *', { opacity: 0, scale: 0.88, y: 12, duration: 0.55, stagger: 0.035, delay: 0.25, ease: 'back.out(1.8)' });
+      gsap.from('.cat-card', { opacity: 0, y: 40, duration: 0.85, stagger: 0.07, delay: 0.35, ease: 'power3.out' });
+
+      const canHover = window.matchMedia('(min-width: 901px) and (hover: hover) and (pointer: fine)').matches;
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      document.querySelectorAll('.cat-card').forEach(card => {
+        const tl = buildTileTimeline(gsap, card, calm);
+        if (!tl || !canHover) return;
+        card._catTimeline = tl;
+
+        const float = card.querySelector('.cat-float');
+        /* the parallax lives on a wrapper so it can never fight the timeline's own
+           transform on the image, which is what makes a reverse jump */
+        const floatTo = float ? {
+          x: gsap.quickTo(float, 'x', { duration: .5, ease: 'power2.out' }),
+          y: gsap.quickTo(float, 'y', { duration: .5, ease: 'power2.out' }),
+          r: gsap.quickTo(float, 'rotation', { duration: .6, ease: 'power2.out' })
+        } : null;
+
+        card.addEventListener('mouseenter', () => {
+          card._isHovered = true;
+          clearTimeout(card._zTimer);
+          card.style.zIndex = '30';
+          tl.timeScale(1).play();
+        });
+
+        card.addEventListener('mouseleave', () => {
+          if (!card._isHovered) return;
+          card._isHovered = false;
+          /* leaving is the same timeline run backwards, a touch quicker */
+          tl.timeScale(1.32).reverse();
+          if (floatTo) { floatTo.x(0); floatTo.y(0); floatTo.r(0); }
+          clearTimeout(card._zTimer);
+          card._zTimer = setTimeout(() => { if (!card._isHovered) card.style.zIndex = ''; }, 700);
+        });
+
+        if (floatTo) {
+          card.addEventListener('mousemove', (e) => {
+            if (!card._isHovered) return;
+            const r = card.getBoundingClientRect();
+            const nx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+            const ny = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+            /* depth, not cursor-following: keep this barely perceptible */
+            floatTo.x(nx * 5);
+            floatTo.y(ny * 3);
+            floatTo.r(nx * 1.1);
+          });
+        }
+      });
+
+      if (canHover) preloadOpenedArt();
+    });
+  </script>
+</body>
+</html>

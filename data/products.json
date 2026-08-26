@@ -1,0 +1,211 @@
+{
+  "categories": [
+    {
+      "slug": "herbs",
+      "name": "أعشاب"
+    },
+    {
+      "slug": "spices",
+      "name": "توابل"
+    },
+    {
+      "slug": "nuts",
+      "name": "مكسرات"
+    },
+    {
+      "slug": "seeds",
+      "name": "بذور"
+    },
+    {
+      "slug": "honey",
+      "name": "عسل"
+    },
+    {
+      "slug": "soap",
+      "name": "صابون طبيعي"
+    },
+    {
+      "slug": "mixes",
+      "name": "خلطات طبيعية"
+    },
+    {
+      "slug": "care",
+      "name": "عناية طبيعية"
+    }
+  ],
+  "products": [
+    {
+      "id": "masalek",
+      "slug": "khaltet-el-masalek",
+      "sku": "NBT-MIX-001",
+      "name": "خلطة المسالك",
+      "category": "خلطات طبيعية",
+      "categorySlug": "mixes",
+      "price": 180,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/masalek.webp",
+        "assets/products/masalek-opened.png"
+      ],
+      "shortDesc": "خلطة أعشاب طبيعية من تحضير العطارة التقليدية، معبّأة في عُلبة محكمة الغلق.",
+      "description": "خلطة أعشاب طبيعية محضّرة على الطريقة التقليدية، منتقاة حبة حبة ومغربلة يدوياً قبل التعبئة. تُعبّأ في عُلبة معدنية محكمة الغلق تحافظ على الزيوت الطبيعية والرائحة لأطول فترة ممكنة.",
+      "weight": "250 جم",
+      "stock": 24,
+      "featured": true,
+      "ingredients": "مجموعة أعشاب طبيعية مجفّفة — بدون أي إضافات صناعية أو مواد حافظة.",
+      "usage": "ملعقة صغيرة على كوب ماء مغلي، تُترك من 5 إلى 7 دقائق ثم تُصفّى."
+    },
+    {
+      "id": "indigo",
+      "slug": "el-neela-el-zar2a",
+      "sku": "NBT-CAR-002",
+      "name": "النيلة الزرقاء",
+      "category": "عناية طبيعية",
+      "categorySlug": "care",
+      "price": 140,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/indigo.webp"
+      ],
+      "shortDesc": "مسحوق النيلة الزرقاء الطبيعي، مغربل ومعبّأ يدوياً.",
+      "description": "مسحوق النيلة الزرقاء الطبيعي، مغربل بعناية حتى النعومة الكاملة ومعبّأ يدوياً. يُستخدم في وصفات العناية الطبيعية المتوارثة دون أي خلط أو تركيبات صناعية.",
+      "weight": "100 جم",
+      "stock": 18,
+      "featured": false,
+      "ingredients": "مسحوق نيلة زرقاء طبيعي 100%.",
+      "usage": "يُستخدم خارجياً ضمن وصفات العناية. يُنصح بتجربة كمية صغيرة أولاً."
+    },
+    {
+      "id": "pumpkin",
+      "slug": "bezr-el-yaqteen",
+      "sku": "NBT-SED-003",
+      "name": "بذور اليقطين",
+      "category": "بذور",
+      "categorySlug": "seeds",
+      "price": 120,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/pumpkin-seeds.webp",
+        "assets/products/pumpkin-seeds-opened.png"
+      ],
+      "shortDesc": "بذور يقطين طبيعية، منقّاة ومعبّأة طازجة.",
+      "description": "بذور يقطين طبيعية منقّاة يدوياً من الشوائب، تُعبّأ طازجة أولاً بأول للحفاظ على قرمشتها وطعمها الطبيعي دون تحميص زائد أو زيوت مضافة.",
+      "weight": "300 جم",
+      "stock": 40,
+      "featured": true,
+      "ingredients": "بذور يقطين طبيعية — بدون زيوت أو مواد حافظة.",
+      "usage": "تُحفظ في مكان جاف بعيداً عن الشمس المباشرة."
+    },
+    {
+      "id": "soap",
+      "slug": "saboon-zeit-el-zaytoon",
+      "sku": "NBT-SOP-004",
+      "name": "صابون زيت الزيتون",
+      "category": "صابون طبيعي",
+      "categorySlug": "soap",
+      "price": 65,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/olive-soap.webp"
+      ],
+      "shortDesc": "صابون مصنوع يدوياً بزيت الزيتون، بتغليف كرتوني طبيعي.",
+      "description": "صابون مصنوع يدوياً على البارد بزيت الزيتون البكر، يُترك ليجف أسابيع قبل التغليف. تغليف كرتوني طبيعي قابل لإعادة التدوير بالكامل.",
+      "weight": "120 جم",
+      "stock": 60,
+      "featured": true,
+      "ingredients": "زيت زيتون بكر، ماء، صودا كاوية (لا تبقى منها أثر بعد التصبّن).",
+      "usage": "للاستخدام اليومي للوجه والجسم. يُحفظ جافاً بين الاستعمالات."
+    },
+    {
+      "id": "honey",
+      "slug": "asal-eswed",
+      "sku": "NBT-HNY-005",
+      "name": "عسل أسود",
+      "category": "عسل",
+      "categorySlug": "honey",
+      "price": 95,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/black-honey.webp",
+        "assets/products/black-honey-opened.png"
+      ],
+      "shortDesc": "عسل أسود (دبس قصب السكر) طبيعي، معبّأ في برطمان محكم.",
+      "description": "عسل أسود (دبس قصب السكر) طبيعي بالكامل، معبّأ في برطمان زجاجي محكم الغلق. قوامه كثيف وطعمه غني كما يُعرف في المائدة المصرية التقليدية.",
+      "weight": "400 جم",
+      "stock": 35,
+      "featured": true,
+      "ingredients": "دبس قصب سكر طبيعي 100% — بدون سكر مضاف.",
+      "usage": "يُحفظ في مكان جاف. قد يتغيّر القوام قليلاً حسب حرارة الجو وهذا طبيعي."
+    },
+    {
+      "id": "cinnamon",
+      "slug": "qerfa",
+      "sku": "NBT-SPC-006",
+      "name": "قرفة",
+      "category": "توابل",
+      "categorySlug": "spices",
+      "price": 55,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/cinnamon.webp",
+        "assets/products/cinnamon-opened.png"
+      ],
+      "shortDesc": "أعواد قرفة كاملة، محفوظة ومعبّأة يدوياً.",
+      "description": "أعواد قرفة كاملة محفوظة بحالتها الطبيعية دون طحن، ما يحافظ على الزيت العطري داخل العود لأطول فترة. تُعبّأ يدوياً بعد الفرز.",
+      "weight": "150 جم",
+      "stock": 50,
+      "featured": false,
+      "ingredients": "أعواد قرفة طبيعية كاملة.",
+      "usage": "تُضاف للمشروبات الساخنة أو تُطحن عند الاستخدام للحصول على أقوى نكهة."
+    },
+    {
+      "id": "macadamia",
+      "slug": "macadamia",
+      "sku": "NBT-NUT-007",
+      "name": "مكاديميا",
+      "category": "مكسرات",
+      "categorySlug": "nuts",
+      "price": 320,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/macadamia.webp",
+        "assets/products/macadamia-opened.png"
+      ],
+      "shortDesc": "مكاديميا بالقشرة، معبّأة بعد الانتقاء.",
+      "description": "مكاديميا بالقشرة، منتقاة حبة حبة ومعبّأة بعد الفرز مباشرة. القشرة تحافظ على الطزاجة والزيوت الطبيعية داخل الحبة حتى لحظة الكسر.",
+      "weight": "250 جم",
+      "stock": 15,
+      "featured": true,
+      "ingredients": "مكاديميا طبيعية بالقشرة — بدون ملح أو زيوت.",
+      "usage": "تُكسر عند الاستخدام. تُحفظ في مكان جاف وبارد."
+    },
+    {
+      "id": "makhtoom",
+      "slug": "makhtoom",
+      "sku": "NBT-MIX-008",
+      "name": "مختوم",
+      "category": "خلطات طبيعية",
+      "categorySlug": "mixes",
+      "price": 210,
+      "compareAtPrice": null,
+      "currency": "EGP",
+      "images": [
+        "assets/products/makhtoom.webp"
+      ],
+      "shortDesc": "خلطة مكسرات وبذور محفوظة في زيت، معبّأة في برطمان زجاجي.",
+      "description": "خلطة مكسرات وبذور محفوظة في زيت طبيعي داخل برطمان زجاجي محكم. تُحضّر على دفعات صغيرة للحفاظ على الطزاجة والقوام.",
+      "weight": "350 جم",
+      "stock": 12,
+      "featured": false,
+      "ingredients": "مكسرات وبذور طبيعية، زيت طبيعي.",
+      "usage": "تُقلّب قبل الاستخدام. تُحفظ في مكان جاف بعيداً عن الشمس."
+    }
+  ]
+}
