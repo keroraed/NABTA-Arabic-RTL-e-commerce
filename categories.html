@@ -20,12 +20,13 @@
     :focus-visible { outline: 2px solid #176B3A; outline-offset: 3px; }
     @keyframes nbFloatB { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-8px) rotate(-1.5deg); } }
     .cat-card:hover { box-shadow: 0 24px 48px rgba(14,42,27,.12); }
-    /* the opened product art is a desktop-hover-only layer — never fetched on touch */
-    @media (max-width: 900px), (hover: none) { .cat-opened-img { display: none !important; } }
-    /* the masalek can is a tall portrait asset — on a narrow single-column card its
-       width-driven height would tower over the fixed-height shelf and poke into the
-       content above it, so it's scaled down to fit at rest on small screens */
-    @media (max-width: 900px) { .cat-card[data-cat-type="masalek"] .cat-normal-img { width: 50% !important; } }
+    /* On a narrow single-column card a tall portrait asset (the masalek can) would
+       otherwise tower over its fixed-height image area. Cap every card image
+       against that height rather than hard-coding a width per product. */
+    @media (max-width: 900px) {
+      .cat-card .cat-normal-img { max-height: 74% !important; }
+      .cat-card .cat-opened-img { max-height: 88% !important; }
+    }
   </style>
 </head>
 <body style="background:#FCFAF5;position:relative;overflow-x:hidden">
@@ -497,8 +498,9 @@
 
       document.querySelectorAll('.cat-card').forEach(card => {
         const tl = buildTileTimeline(gsap, card, calm);
-        if (!tl || !canHover) return;
+        if (!tl) return;
         card._catTimeline = tl;
+        if (!canHover) return; // touch: scroll observer below drives it instead
 
         const float = card.querySelector('.cat-float');
         /* the parallax lives on a wrapper so it can never fight the timeline's own
@@ -540,7 +542,33 @@
         }
       });
 
-      if (canHover) preloadOpenedArt();
+      preloadOpenedArt();
+
+      /* Touch devices have no hover, so the same breakout timeline is driven by
+         scroll position: a card opens when it settles into the middle band of
+         the viewport and closes when it leaves. Tapping still navigates. */
+      if (!canHover && window.IntersectionObserver) {
+        var revealObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            var card = en.target;
+            if (!card._catTimeline) return;
+            if (en.isIntersecting && !card._revealed) {
+              card._revealed = true;
+              clearTimeout(card._zTimer);
+              card.style.zIndex = '30';
+              card._catTimeline.timeScale(1).play();
+            } else if (!en.isIntersecting && card._revealed) {
+              card._revealed = false;
+              card._catTimeline.timeScale(1.32).reverse();
+              clearTimeout(card._zTimer);
+              card._zTimer = setTimeout(function () {
+                if (!card._revealed) card.style.zIndex = '';
+              }, 700);
+            }
+          });
+        }, { rootMargin: '-32% 0px -32% 0px', threshold: 0 });
+        document.querySelectorAll('.cat-card').forEach(function (c) { revealObs.observe(c); });
+      }
     });
   </script>
 </body>

@@ -45,11 +45,17 @@ input,button{font-family:inherit}
   [data-hero-badge]{display:none !important}
   [data-hero-dots]{bottom:14px !important;inset-inline-start:18px !important}
 }
-/* the opened product art is a desktop-hover-only layer — never fetched on touch */
-@media (max-width: 900px), (hover: none){[data-tile-opened]{display:none !important}}
-/* the masalek can is a tall portrait asset — on a narrow single-column card its
-   width-driven height would tower over the fixed-height shelf and poke into the
-   content above it, so it's scaled down to fit at rest on small screens */
+/* On a narrow single-column card a tall portrait asset (the masalek can) would
+   otherwise tower over the fixed-height shelf and cover the heading above it.
+   Cap every tile image against the card height instead of hard-coding a width
+   per product; object-fit:contain scales it down without distortion. */
+@media (max-width: 900px){
+  [data-tile] [data-tile-normal]{max-height:74% !important}
+  [data-tile] [data-tile-opened]{max-height:70% !important}
+  /* masalek is the only portrait asset (1024x1536) so its opened art runs tall;
+     cap it tighter to keep the breakout inside the gap above the grid */
+  [data-tile="masalek"] [data-tile-opened]{max-height:62% !important}
+}
 /* second section (story) layout */
 .story-grid{display:grid;grid-template-columns:minmax(320px,0.92fr) minmax(360px,1.15fr);gap:clamp(36px,5vw,84px);align-items:center}
 .story-features{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,22px);width:100%}
@@ -1117,6 +1123,7 @@ class Component extends DCLogic {
     clearTimeout(this.safeTimer);
     this.filmObs && this.filmObs.disconnect();
     this.tileObs && this.tileObs.disconnect();
+    this.tileRevealObs && this.tileRevealObs.disconnect();
     (this.tiles || []).forEach(t => {
       clearTimeout(t._zTimer);
       if (t._catTimeline) t._catTimeline.kill();
@@ -1286,7 +1293,11 @@ class Component extends DCLogic {
   }
 
   /* ---------- category shelf breakout ---------- */
-  canTileHover = () => this.state.isDesktop && !!(this.hoverMq && this.hoverMq.matches);
+  /* Reads the media queries directly rather than this.state.isDesktop: initMotion()
+     runs synchronously inside componentDidMount, before React flushes the
+     setState that corrects isDesktop, so the state value is stale here. Reading
+     live also keeps this correct across resizes. */
+  canTileHover = () => !!(this.mq && this.mq.matches) && !!(this.hoverMq && this.hoverMq.matches);
 
   initTiles = (gsap, calm) => {
     this.tiles = gsap.utils.toArray('[data-tile]');
@@ -1302,12 +1313,38 @@ class Component extends DCLogic {
       } : null;
     });
     this.preloadTileArt();
+    this.initTileScrollReveal();
+  };
+
+  /* Touch devices have no hover, so the very same breakout timeline is driven
+     by scroll position instead: a tile opens when it settles into the middle
+     band of the viewport and closes when it leaves. Tapping still navigates —
+     the gesture is never hijacked. */
+  initTileScrollReveal = () => {
+    if (!window.IntersectionObserver || !this.tiles || !this.tiles.length) return;
+    this.tileRevealObs = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        const t = en.target;
+        if (!t._catTimeline || this.canTileHover()) return; // hover drives it instead
+        if (en.isIntersecting && !t._revealed) {
+          t._revealed = true;
+          clearTimeout(t._zTimer);
+          t.style.zIndex = '30';
+          t._catTimeline.timeScale(1).play();
+        } else if (!en.isIntersecting && t._revealed) {
+          t._revealed = false;
+          t._catTimeline.timeScale(1.32).reverse();
+          clearTimeout(t._zTimer);
+          t._zTimer = setTimeout(() => { if (!t._revealed) t.style.zIndex = ''; }, 700);
+        }
+      });
+    }, { rootMargin: '-32% 0px -32% 0px', threshold: 0 });
+    this.tiles.forEach((t) => this.tileRevealObs.observe(t));
   };
 
   /* the opened artwork is heavy, so warm it just before the shelf reaches the
      viewport: the first hover then paints with no fetch and no decode */
   preloadTileArt = () => {
-    if (!this.canTileHover()) return;
     const srcs = [].map.call(document.querySelectorAll('[data-tile-opened]'), i => i.getAttribute('src')).filter(Boolean);
     if (!srcs.length) return;
     let done = false;
