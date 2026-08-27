@@ -46,7 +46,7 @@
       "currency": "EGP",
       "images": [
         "assets/products/masalek.webp",
-        "assets/products/masalek-opened.png"
+        "assets/products/masalek-opened.webp"
       ],
       "shortDesc": "خلطة أعشاب طبيعية من تحضير العطارة التقليدية، معبّأة في عُلبة محكمة الغلق.",
       "description": "خلطة أعشاب طبيعية محضّرة على الطريقة التقليدية، منتقاة حبة حبة ومغربلة يدوياً قبل التعبئة. تُعبّأ في عُلبة معدنية محكمة الغلق تحافظ على الزيوت الطبيعية والرائحة لأطول فترة ممكنة.",
@@ -89,7 +89,7 @@
       "currency": "EGP",
       "images": [
         "assets/products/pumpkin-seeds.webp",
-        "assets/products/pumpkin-seeds-opened.png"
+        "assets/products/pumpkin-seeds-opened.webp"
       ],
       "shortDesc": "بذور يقطين طبيعية، منقّاة ومعبّأة طازجة.",
       "description": "بذور يقطين طبيعية منقّاة يدوياً من الشوائب، تُعبّأ طازجة أولاً بأول للحفاظ على قرمشتها وطعمها الطبيعي دون تحميص زائد أو زيوت مضافة.",
@@ -132,7 +132,7 @@
       "currency": "EGP",
       "images": [
         "assets/products/black-honey.webp",
-        "assets/products/black-honey-opened.png"
+        "assets/products/black-honey-opened.webp"
       ],
       "shortDesc": "عسل أسود (دبس قصب السكر) طبيعي، معبّأ في برطمان محكم.",
       "description": "عسل أسود (دبس قصب السكر) طبيعي بالكامل، معبّأ في برطمان زجاجي محكم الغلق. قوامه كثيف وطعمه غني كما يُعرف في المائدة المصرية التقليدية.",
@@ -154,7 +154,7 @@
       "currency": "EGP",
       "images": [
         "assets/products/cinnamon.webp",
-        "assets/products/cinnamon-opened.png"
+        "assets/products/cinnamon-opened.webp"
       ],
       "shortDesc": "أعواد قرفة كاملة، محفوظة ومعبّأة يدوياً.",
       "description": "أعواد قرفة كاملة محفوظة بحالتها الطبيعية دون طحن، ما يحافظ على الزيت العطري داخل العود لأطول فترة. تُعبّأ يدوياً بعد الفرز.",
@@ -176,7 +176,7 @@
       "currency": "EGP",
       "images": [
         "assets/products/macadamia.webp",
-        "assets/products/macadamia-opened.png"
+        "assets/products/macadamia-opened.webp"
       ],
       "shortDesc": "مكاديميا بالقشرة، معبّأة بعد الانتقاء.",
       "description": "مكاديميا بالقشرة، منتقاة حبة حبة ومعبّأة بعد الفرز مباشرة. القشرة تحافظ على الطزاجة والزيوت الطبيعية داخل الحبة حتى لحظة الكسر.",
