@@ -1,5 +1,21 @@
 # NABTA — E-commerce Handoff & Backend Migration Plan
 
+> **Status update — the Laravel conversion is done.**
+> The app lives in [`nabta-app/`](nabta-app/) — see its
+> [README](nabta-app/README.md). The static files in this directory are now the
+> design reference the port was checked against; they are no longer the site.
+>
+> Two decisions in this document were overridden during the build, because the
+> POS brief (`NABTA-POS-Scale-Offline-Prompt.md`) mandates a Blade monolith:
+> - **§5 Frontend** recommended Inertia + React. The build is **Blade + Alpine**.
+> - **§4 API contract** described `/api/*` endpoints. There is **no `routes/api.php`**;
+>   the storefront is server-rendered and the cart uses session web routes.
+>
+> Everything else here still stands, in particular the open items in §2.4 and §7.
+
+---
+
+
 Arabic (RTL) storefront, Egyptian market, **guest checkout + Cash on Delivery only**.
 This document covers what exists, what was just added, what must happen before the
 design is rebuilt on a framework, and the recommended backend stack.
