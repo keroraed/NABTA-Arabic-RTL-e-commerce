@@ -4,6 +4,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Shop notifications
+    |--------------------------------------------------------------------------
+    |
+    | Where the "new order" email goes. Comma-separate several addresses. Leave
+    | empty to switch the email off. Delivery uses the normal MAIL_* settings.
+    |
+    */
+
+    'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL', 'admin@nabta.store'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Art direction
     |--------------------------------------------------------------------------
     |

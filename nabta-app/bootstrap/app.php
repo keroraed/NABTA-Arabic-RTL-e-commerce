@@ -22,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             App\Http\Middleware\SetLocale::class,
         ]);
 
+        // Paymob's server-to-server callback cannot carry a CSRF token; it is
+        // authenticated by its HMAC signature instead (PaymobService).
+        $middleware->preventRequestForgery(except: ['paymob/webhook']);
+
         $middleware->alias([
             'permission' => App\Http\Middleware\EnsurePermission::class,
         ]);

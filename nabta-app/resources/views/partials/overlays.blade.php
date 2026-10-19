@@ -32,14 +32,14 @@
             <p style="margin:0 0 10px;font-size:12px;color:#6B4630" x-text="it.cat"></p>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
               <div style="display:flex;align-items:center;border:1px solid rgba(14,42,27,.16);border-radius:2px">
-                <button type="button" @click="$store.cart.dec(it)" aria-label="تقليل الكمية" style="width:36px;height:36px;border:0;background:none;cursor:pointer;font-size:16px;color:#0E2A1B">−</button>
+                <button type="button" @click="$store.cart.dec(it)" aria-label="تقليل الكمية" style="width:44px;height:44px;border:0;background:none;cursor:pointer;font-size:16px;color:#0E2A1B;touch-action:manipulation">−</button>
                 <span style="min-width:26px;text-align:center;font-size:14px" x-text="it.qty"></span>
-                <button type="button" @click="$store.cart.inc(it)" aria-label="زيادة الكمية" style="width:36px;height:36px;border:0;background:none;cursor:pointer;font-size:16px;color:#0E2A1B">+</button>
+                <button type="button" @click="$store.cart.inc(it)" aria-label="زيادة الكمية" style="width:44px;height:44px;border:0;background:none;cursor:pointer;font-size:16px;color:#0E2A1B;touch-action:manipulation">+</button>
               </div>
               <span style="font-size:15px;font-weight:600;color:#176B3A" x-text="$store.cart.lineLabel(it)"></span>
             </div>
           </div>
-          <button type="button" @click="$store.cart.remove(it)" aria-label="إزالة المنتج" style="flex:0 0 auto;width:36px;height:36px;border:0;background:none;cursor:pointer;display:grid;place-items:center;align-self:flex-start">
+          <button type="button" @click="$store.cart.remove(it)" aria-label="إزالة المنتج" style="flex:0 0 auto;width:44px;height:44px;margin-top:-8px;margin-inline-end:-10px;border:0;background:none;cursor:pointer;display:grid;place-items:center;align-self:flex-start">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B4630" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>
           </button>
         </div>

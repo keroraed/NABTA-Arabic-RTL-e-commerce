@@ -1,7 +1,8 @@
 # NABTA — Laravel storefront + admin
 
 Arabic (RTL) storefront for the Egyptian market. Guest checkout, cash on delivery
-only. Laravel 13 + Blade + Alpine, with a Filament admin panel.
+or online payment through Paymob. Laravel 13 + Blade + Alpine, with a Filament
+admin panel.
 
 This replaces the static prototype in the parent directory. The design is a
 **faithful port** of those pages, not a re-interpretation — see
@@ -67,15 +68,64 @@ resources/views/
 | Route | Page |
 |---|---|
 | `/` | home (the Design Canvas one-pager) |
-| `/shop`, `/shop?cat=<slug>` | product listing, filtered |
+| `/shop`, `/shop?cat=<slug>&brand=<slug>` | product listing, filtered by category (a parent includes its subcategories) and brand |
 | `/p/{slug}` | product detail |
 | `/categories` | the eight category cards |
-| `/checkout`, `/order/{number}` | COD checkout and confirmation |
+| `/checkout`, `/order/{number}` | checkout (COD or Paymob) and confirmation |
+| `/checkout/paymob/callback` | Paymob browser redirect after payment (HMAC-verified) |
+| `POST /paymob/webhook` | Paymob server-to-server callback (HMAC-verified, CSRF-exempt) |
 | `/cart`, `/cart/add/{id}` … | cart endpoints (session + CSRF, JSON for Alpine) |
 
 There is deliberately **no `routes/api.php`**. The POS phase mandates a Blade
 monolith with session auth throughout; the cart endpoints answer JSON but are
-ordinary web routes.
+ordinary web routes, and so is the Paymob webhook.
+
+---
+
+## Online payment (Paymob)
+
+Storefront only — the POS takes cash or the card terminal and never touches
+Paymob. The flow is Paymob's Intention API + Unified Checkout, which covers
+cards and mobile wallets (Vodafone Cash, Orange Cash, Etisalat Cash) on one page.
+
+1. The customer picks **الدفع الإلكتروني** at checkout. `OrderPlacer` creates the
+   order as `pending_payment` and **reserves its stock** with the same
+   `online_sale` movement a COD order records. The cart is kept.
+2. `PaymobService::startCheckout()` creates the intention (amounts recomputed
+   from the stored order, in piastres) and redirects to Paymob.
+3. Paymob reports back twice: the webhook (authoritative, arrives even if the
+   tab is closed) and the browser redirect. Both are HMAC-SHA512 verified and
+   handed to `OrderPaymentSettler`, which is idempotent:
+   - **paid** → `confirmed` + `paid`, cart cleared, shop emailed;
+   - **declined** → `failed_payment`, stock released (`online_sale_released`),
+     customer sent back to checkout with their cart intact;
+   - a signed success for the **wrong amount** is never marked paid — it is
+     logged for a human.
+4. `php artisan orders:expire-unpaid` (scheduled every 10 minutes) fails orders
+   still unpaid after `PAYMOB_EXPIRES_AFTER_MINUTES` and releases their stock.
+   If money arrives after that, the order is confirmed anyway and the stock
+   re-taken.
+
+**Setup:** fill the `PAYMOB_*` keys in `.env` (see `.env.example`), set the
+transaction *processed* callback in the Paymob dashboard to
+`https://<domain>/paymob/webhook` and the *response* callback to
+`https://<domain>/checkout/paymob/callback`, and add the scheduler cron:
+
+```
+* * * * * cd /path/to/nabta-app && php artisan schedule:run >> /dev/null 2>&1
+```
+
+The online option only appears at checkout once the secret key, public key,
+HMAC secret and at least one integration id are all set.
+
+## New-order email
+
+Every COD order — and every Paymob order once paid — emails
+`ADMIN_NOTIFICATION_EMAIL` (comma-separate several; empty disables) over the
+normal `MAIL_*` SMTP settings. `MAIL_ENCRYPTION=ssl` maps to implicit TLS;
+`tls` on port 587 negotiates STARTTLS automatically. The email is sent after
+the response and any SMTP failure is logged as a warning, so a mail outage can
+never fail or slow a checkout.
 
 ---
 
@@ -169,8 +219,15 @@ disclaimers are gone, since the catalogue is now real.
 
 - **المنتجات** — full CRUD, image repeater, in-line stock/visibility toggles,
   low-stock filter.
-- **الأقسام** — CRUD plus the landing-page copy (heading, badge, description)
-  that used to be hard-coded in `categories.html`.
+- **الأقسام** — CRUD with subcategories (pick a parent; loops are refused), plus
+  the landing-page copy (heading, badge, description) that used to be
+  hard-coded in `categories.html`.
+- **العلامات التجارية** — brands with logo, slug and visibility.
+
+A product has one **primary** category (`products.category_id` — the label on
+its card, the related rail and the POS tile) and can be filed under any number
+of further categories through the `category_product` pivot. The primary one is
+always kept in the pivot, so filtering never misses a product.
 - **الطلبات** — read-only, split into tabs by status, with explicit transition
   actions. See below.
 - **المحافظات والشحن** — the shipping table, editable in place.
@@ -184,7 +241,9 @@ snapshotted at checkout. Letting staff retype an amount or a line item would
 silently break the only guarantee checkout makes, so `OrderResource` disables
 create and edit entirely.
 
-Status moves through explicit actions that follow the COD flow:
+Status moves through explicit actions that follow the COD flow (Paymob's
+`pending_payment` / `failed_payment` states are driven only by Paymob, never by
+staff):
 
 ```
 pending → confirmed → shipped → delivered
@@ -238,8 +297,9 @@ host-relative, so it survives any domain, port or `APP_URL` drift.
 php artisan test
 ```
 
-98 feature tests over the cart, checkout money/stock rules, the admin panel, POS
-pricing and sales, returns, accounting, and roles/permissions. They run against
+149 tests over the cart, checkout money/stock rules, Paymob payments and HMAC
+verification, the new-order email, the catalogue hierarchy, the admin panel,
+POS pricing and sales, returns, accounting, and roles/permissions. They run against
 SQLite in memory; nothing touches the MySQL database.
 
 ---

@@ -203,13 +203,18 @@ class PosController extends Controller
     {
         return Product::query()
             ->active()
-            ->with('category')
+            ->with('category', 'categories', 'brand')
             ->orderBy('name_ar')
             ->get()
             ->map(fn (Product $p) => [
                 'id' => $p->id,
                 'name' => $p->name_ar,
+                // The tile shows the primary category; search also matches every
+                // category the product is filed under, and its brand.
                 'category' => $p->category?->name_ar,
+                'category_ids' => $p->categories->pluck('id')->all(),
+                'categories' => $p->categories->pluck('name_ar')->all(),
+                'brand' => $p->brand?->name_ar,
                 'sku' => $p->sku,
                 'barcode' => $p->barcode,
                 'plu' => $p->plu_code,

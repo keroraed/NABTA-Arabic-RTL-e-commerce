@@ -50,7 +50,7 @@ class ProductResource extends Resource
     /** Avoids one query per row for the thumbnail and the SKU subtitle. */
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withOnlineStock()->with(['images', 'category']);
+        return parent::getEloquentQuery()->withOnlineStock()->with(['images', 'category', 'categories', 'brand']);
     }
 
     public static function getRelations(): array

@@ -39,13 +39,18 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            // Laravel's own key is MAIL_SCHEME ('smtp' or 'smtps'). MAIL_ENCRYPTION
+            // is what most hosting panels (Hostinger included) tell you to set,
+            // so 'ssl' maps to implicit TLS. 'tls' needs nothing: STARTTLS is
+            // negotiated automatically on port 587.
+            'scheme' => env('MAIL_SCHEME') ?? (in_array(strtolower((string) env('MAIL_ENCRYPTION')), ['ssl', 'smtps'], true) ? 'smtps' : null),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
             'port' => env('MAIL_PORT', 2525),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+            // Bounded so an unreachable SMTP host cannot hang a request.
+            'timeout' => env('MAIL_TIMEOUT', 10),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 

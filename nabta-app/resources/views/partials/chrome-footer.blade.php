@@ -7,7 +7,7 @@
         [route('home').'#story',   'من نحن'],
         [route('home').'#contact', 'تواصل معنا'],
     ];
-    $footerCats = \App\Models\Category::active()->orderBy('sort_order')->take(5)->get();
+    $footerCats = \App\Models\Category::active()->roots()->orderBy('sort_order')->take(5)->get();
 @endphp
 
 <footer style="background:#0E2A1B;color:#F5EBD8;padding:clamp(60px,8vw,100px) clamp(16px,3vw,44px) 30px;border-top:1px solid rgba(245,235,216,.1)">

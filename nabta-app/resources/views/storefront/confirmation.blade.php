@@ -22,8 +22,18 @@
             <path class="tick-path" d="m5 13 4 4 10-10"/>
           </svg>
         </div>
-        <h1 style="margin:0 0 10px;font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:700;letter-spacing:-.02em">تم استلام طلبك بنجاح</h1>
-        <p style="margin:0;font-size:15.5px;line-height:1.85;color:#3A483D;font-weight:300">سنتواصل معك هاتفياً خلال ٢٤ ساعة لتأكيد الطلب وموعد التسليم.</p>
+        <h1 style="margin:0 0 10px;font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:700;letter-spacing:-.02em">
+          {{ $order->isPaid() ? 'تم الدفع واستلام طلبك بنجاح' : 'تم استلام طلبك بنجاح' }}
+        </h1>
+        <p style="margin:0;font-size:15.5px;line-height:1.85;color:#3A483D;font-weight:300">
+          @if ($order->isPaid())
+            تم تأكيد الدفع الإلكتروني. سنتواصل معك هاتفياً لتحديد موعد التسليم.
+          @elseif ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT)
+            جارٍ تأكيد عملية الدفع من Paymob — قد يستغرق ذلك دقائق. سنتواصل معك فور تأكيدها.
+          @else
+            سنتواصل معك هاتفياً خلال ٢٤ ساعة لتأكيد الطلب وموعد التسليم.
+          @endif
+        </p>
         <p style="margin:18px 0 0;font-size:14px;color:#6B4630">رقم الطلب</p>
         <p style="margin:4px 0 0;font-size:clamp(20px,3vw,26px);font-weight:700;color:#176B3A;letter-spacing:.04em">{{ $order->order_number }}</p>
       </div>
@@ -62,7 +72,11 @@
             <span style="font-size:16px;font-weight:700">الإجمالي</span>
             <span style="font-size:22px;font-weight:700;color:#176B3A">{{ number_format($order->total, 0) }} ج.م</span>
           </div>
-          <p style="margin:14px 0 0;font-size:13px;color:#6B4630;line-height:1.75">طريقة الدفع: <strong style="font-weight:600">الدفع عند الاستلام</strong></p>
+          <p style="margin:14px 0 0;font-size:13px;color:#6B4630;line-height:1.75">
+            طريقة الدفع: <strong style="font-weight:600">{{ $order->paymentMethodLabel() }}</strong>
+            <span style="opacity:.5">·</span>
+            <strong style="font-weight:600;color:{{ $order->isPaid() ? '#176B3A' : 'inherit' }}">{{ $order->paymentStatusLabel() }}</strong>
+          </p>
         </div>
 
         <div class="card" style="padding:clamp(20px,3vw,30px)">

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
+use App\Services\Payment\PaymobService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,6 +32,13 @@ class StoreOrderRequest extends FormRequest
             'address_line' => ['required', 'string', 'min:10', 'max:500'],
             'landmark' => ['nullable', 'string', 'max:200'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            // Online payment is only offered while Paymob is fully configured.
+            'payment_method' => [
+                'required',
+                Rule::in(app(PaymobService::class)->isConfigured()
+                    ? [Order::PAYMENT_COD, Order::PAYMENT_PAYMOB]
+                    : [Order::PAYMENT_COD]),
+            ],
         ];
     }
 
@@ -47,6 +56,8 @@ class StoreOrderRequest extends FormRequest
             'city.min' => 'اكتب المدينة أو المنطقة',
             'address_line.required' => 'اكتب العنوان بالتفصيل (شارع، رقم العقار، الدور)',
             'address_line.min' => 'اكتب العنوان بالتفصيل (شارع، رقم العقار، الدور)',
+            'payment_method.required' => 'اختر طريقة الدفع',
+            'payment_method.in' => 'طريقة الدفع المختارة غير متاحة حالياً',
         ];
     }
 
@@ -55,6 +66,8 @@ class StoreOrderRequest extends FormRequest
         $this->merge(array_filter([
             'customer_phone' => $this->cleanPhone($this->input('customer_phone')),
             'customer_alt_phone' => $this->cleanPhone($this->input('customer_alt_phone')),
+            // Older cached checkout pages post no method; they only ever offered COD.
+            'payment_method' => $this->input('payment_method', Order::PAYMENT_COD),
         ], fn ($v) => $v !== null));
     }
 

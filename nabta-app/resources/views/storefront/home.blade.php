@@ -46,20 +46,20 @@
 
     <!-- Left Side: Actions (Search, User, Cart) -->
     <div style="display:flex;align-items:center;gap:8px;flex:0 0 auto">
-      <button class="nbh-3" type="button" onclick="NB.openSearch(event)" aria-label="بحث" style="width:42px;height:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s">
+      <button class="nbh-3" type="button" onclick="NB.openSearch(event)" aria-label="بحث" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E2A1B" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.3-4.3"/></svg>
       </button>
       <div class="nb-desk">
-        <button class="nbh-3" type="button" aria-label="حسابي" style="width:42px;height:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s">
+        <button class="nbh-3" type="button" aria-label="حسابي" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E2A1B" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
         </button>
       </div>
-      <button class="nbh-3" type="button" onclick="NB.openCart(event)" aria-label="سلة المشتريات" style="position:relative;width:42px;height:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s">
+      <button class="nbh-3" type="button" onclick="NB.openCart(event)" aria-label="سلة المشتريات" style="position:relative;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%;transition:background .2s">
         <svg data-cart-icon width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#0E2A1B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span data-cart-badge x-cloak x-show="$store.cart.count > 0" x-text="$store.cart.count" style="position:absolute;top:2px;inset-inline-start:2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#176B3A;color:#FCFAF5;font-size:11px;font-weight:700;display:grid;place-items:center;box-sizing:border-box"></span>
       </button>
       <div class="nb-mob">
-        <button type="button" onclick="NB.openMenu(event)" aria-label="القائمة" style="width:42px;height:42px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%">
+        <button type="button" onclick="NB.openMenu(event)" aria-label="القائمة" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:0;cursor:pointer;border-radius:50%">
           <span style="display:block;width:22px">
             <span data-hbg style="display:block;height:1.8px;background:#0E2A1B;margin-bottom:6px;border-radius:1px"></span>
             <span data-hbg style="display:block;height:1.8px;background:#0E2A1B;width:15px;border-radius:1px"></span>
@@ -355,7 +355,7 @@
               <a class="nbh-2" href="{{ route('products.show', $p) }}" style="display:block;font-size:clamp(17px,1.6vw,21px);font-weight:500;color:#0E2A1B;margin-bottom:14px;text-decoration:none">{{ $p->name_ar }}</a>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
                 <span style="font-size:16px;font-weight:600;color:#176B3A">{{ number_format($p->price, 0) }} <span style="font-size:12px;font-weight:400;color:#6B4630">ج.م</span></span>
-                <button type="button" onclick="NB.onQuick(event)" data-id="{{ $p->id }}" style="background:none;border:0;cursor:pointer;font-size:13px;color:#6B4630;padding:6px 0;text-decoration:underline;text-underline-offset:4px">نظرة سريعة</button>
+                <button type="button" onclick="NB.onQuick(event)" data-id="{{ $p->id }}" style="background:none;border:0;cursor:pointer;font-size:13px;color:#6B4630;padding:6px 0;min-height:44px;text-decoration:underline;text-underline-offset:4px">نظرة سريعة</button>
               </div>
             </div>
             <button class="nbh-7" type="button" data-addbtn onclick="NB.onAdd(event)" data-id="{{ $p->id }}" @disabled($p->isOutOfStock()) style="position:absolute;z-index:5;inset-inline:14px;bottom:14px;opacity:0;border:0;cursor:pointer;background:#0E2A1B;color:#F5EBD8;font-size:14px;font-weight:500;padding:15px;border-radius:2px;min-height:48px">{{ $p->isOutOfStock() ? 'نفدت الكمية' : 'أضف للسلة' }}</button>

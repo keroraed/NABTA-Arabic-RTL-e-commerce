@@ -7,6 +7,13 @@ enum StockMovementType: string
     case PurchaseReceipt = 'purchase_receipt';
     case PosSale = 'pos_sale';
     case OnlineSale = 'online_sale';
+
+    /**
+     * Puts back stock that an online order reserved but never paid for — a
+     * declined or abandoned Paymob payment. Not a customer return: the goods
+     * never left the shelf.
+     */
+    case OnlineSaleReleased = 'online_sale_released';
     case TransferOut = 'transfer_out';
     case TransferIn = 'transfer_in';
     case CustomerReturn = 'customer_return';
@@ -26,6 +33,7 @@ enum StockMovementType: string
             self::PurchaseReceipt => 'استلام مشتريات',
             self::PosSale => 'بيع كاشير',
             self::OnlineSale => 'بيع أونلاين',
+            self::OnlineSaleReleased => 'إلغاء حجز أونلاين',
             self::TransferOut => 'تحويل صادر',
             self::TransferIn => 'تحويل وارد',
             self::CustomerReturn => 'مرتجع عميل',
@@ -42,6 +50,7 @@ enum StockMovementType: string
             self::PurchaseReceipt,
             self::TransferIn,
             self::CustomerReturn,
+            self::OnlineSaleReleased,
         ], true);
     }
 

@@ -43,7 +43,7 @@ class StockMovementsTable
                     ->formatStateUsing(fn (StockMovementType $state) => $state->label())
                     ->color(fn (StockMovementType $state) => match ($state) {
                         StockMovementType::PurchaseReceipt, StockMovementType::TransferIn,
-                        StockMovementType::CustomerReturn => 'success',
+                        StockMovementType::CustomerReturn, StockMovementType::OnlineSaleReleased => 'success',
                         StockMovementType::Shrinkage => 'warning',
                         StockMovementType::Adjustment => 'info',
                         default => 'danger',

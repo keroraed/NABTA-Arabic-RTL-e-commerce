@@ -89,7 +89,9 @@
         return this.catalogue.filter(function (p) {
           return (p.name && p.name.indexOf(q) > -1)
             || (p.sku && p.sku.toLowerCase().indexOf(lower) > -1)
-            || (p.plu && String(p.plu).indexOf(q) > -1);
+            || (p.plu && String(p.plu).indexOf(q) > -1)
+            || (p.brand && p.brand.toLowerCase().indexOf(lower) > -1)
+            || (p.categories || []).some(function (c) { return c.indexOf(q) > -1; });
         }).slice(0, 60);
       },
 

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Models\Category;
+use App\Models\Product;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -10,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class ProductForm
@@ -35,12 +38,58 @@ class ProductForm
                                 }
                             }),
 
-                        Select::make('category_id')
-                            ->label(__('القسم'))
-                            ->relationship('category', 'name_ar')
+                        Select::make('brand_id')
+                            ->label(__('العلامة التجارية'))
+                            ->relationship('brand', 'name_ar', fn (Builder $query) => $query->orderBy('sort_order'))
                             ->searchable()
                             ->preload()
-                            ->required(),
+                            ->placeholder(__('بدون علامة تجارية')),
+
+                        Select::make('category_id')
+                            ->label(__('القسم الأساسي'))
+                            ->helperText(__('يظهر اسمه على بطاقة المنتج وفي الكاشير.'))
+                            ->relationship('category', 'name_ar', fn (Builder $query) => $query->with('parent')->orderBy('sort_order'))
+                            ->getOptionLabelFromRecordUsing(fn (Category $category) => $category->full_name)
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            // Moving the primary category swaps it in the list
+                            // below too, visibly, so the old one is not left
+                            // behind by accident.
+                            ->live()
+                            ->afterStateUpdated(function ($state, $old, callable $get, callable $set) {
+                                $ids = array_map('intval', (array) $get('categories'));
+                                $ids = array_values(array_diff($ids, [(int) $old]));
+
+                                if ($state) {
+                                    $ids[] = (int) $state;
+                                }
+
+                                $set('categories', array_values(array_unique($ids)));
+                            }),
+
+                        // Every category the product appears under in the shop,
+                        // subcategories included. The primary category is always
+                        // kept in this list on save, so it cannot be dropped here
+                        // while it is still the primary one.
+                        Select::make('categories')
+                            ->label(__('كل الأقسام والأقسام الفرعية'))
+                            ->helperText(__('يظهر المنتج في كل قسم مختار هنا، بالإضافة إلى القسم الأساسي.'))
+                            ->relationship('categories', 'name_ar', fn (Builder $query) => $query->with('parent')->orderBy('sort_order'))
+                            ->getOptionLabelFromRecordUsing(fn (Category $category) => $category->full_name)
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->saveRelationshipsUsing(function (Product $record, ?array $state) {
+                                $ids = array_map('intval', $state ?? []);
+
+                                if ($record->category_id) {
+                                    $ids[] = (int) $record->category_id;
+                                }
+
+                                $record->categories()->sync(array_values(array_unique($ids)));
+                            })
+                            ->columnSpanFull(),
 
                         TextInput::make('slug')
                             ->label(__('الرابط (slug)'))

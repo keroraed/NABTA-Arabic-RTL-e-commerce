@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\PaymobController;
 use App\Http\Controllers\Pos\PosReturnController;
 use App\Http\Controllers\Pos\PosSaleController;
 use App\Http\Controllers\ReportController;
@@ -11,7 +12,7 @@ use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 /*
- * Storefront. Blade-rendered, guest checkout, cash on delivery only.
+ * Storefront. Blade-rendered, guest checkout, cash on delivery or Paymob.
  *
  * There is deliberately no routes/api.php: the POS phase mandates a Blade
  * monolith with session auth throughout (NABTA-POS-Scale-Offline-Prompt.md,
@@ -41,6 +42,18 @@ Route::post('/checkout', [CheckoutController::class, 'store'])
     ->middleware('throttle:10,1')   // a public COD endpoint with no auth will get spammed
     ->name('checkout.store');
 Route::get('/order/{order}', [CheckoutController::class, 'confirmation'])->name('orders.confirmation');
+
+/*
+ * Paymob. The customer's browser returns to the callback; Paymob's servers post
+ * to the webhook, which is CSRF-exempt (bootstrap/app.php) because it carries
+ * an HMAC signature instead. Both verify that signature before touching an order.
+ */
+Route::get('/checkout/paymob/callback', [PaymobController::class, 'callback'])
+    ->middleware('throttle:30,1')
+    ->name('paymob.callback');
+Route::post('/paymob/webhook', [PaymobController::class, 'webhook'])
+    ->middleware('throttle:120,1')
+    ->name('paymob.webhook');
 
 /*
  * POS. Session-authenticated Blade screens for the cashier, on the store PC.

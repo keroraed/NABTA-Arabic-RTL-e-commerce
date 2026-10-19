@@ -24,7 +24,10 @@ class StoreOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         $pending = Order::where('status', Order::STATUS_PENDING)->count();
-        $todayCount = Order::whereDate('placed_at', today())->count();
+        // An unpaid or failed Paymob checkout is not a sale yet.
+        $todayCount = Order::whereDate('placed_at', today())
+            ->whereNotIn('status', [Order::STATUS_PENDING_PAYMENT, Order::STATUS_FAILED_PAYMENT])
+            ->count();
 
         $delivered = Order::where('status', Order::STATUS_DELIVERED);
         $deliveredRevenue = (clone $delivered)->sum('total');

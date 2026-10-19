@@ -7,7 +7,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'إتمام الطلب | نبته NABTA')
-@section('description', 'أكمل طلبك من نبته — الدفع عند الاستلام في جميع المحافظات، بدون إنشاء حساب.')
+@section('description', 'أكمل طلبك من نبته — الدفع عند الاستلام أو إلكترونياً في جميع المحافظات، بدون إنشاء حساب.')
 
 @push('head')
   <meta name="robots" content="noindex">
@@ -17,9 +17,14 @@
 
   @include('partials.chrome-header', ['active' => 'shop'])
 
-  <main style="padding-top:76px"
+  {{-- pageshow: coming back from Paymob with the back button restores this
+       page from the bfcache with `submitting` still true. --}}
+  <main class="co-page" style="padding-top:76px"
+        @pageshow.window="if ($event.persisted) submitting = false"
         x-data="{
           gov: '{{ old('governorate_id') }}',
+          payment: @js(old('payment_method', 'cod')),
+          submitting: false,
           fees: {{ Js::from($governorates->pluck('shipping_fee', 'id')->map(fn ($f) => (float) $f)) }},
           threshold: {{ $freeShippingThreshold }},
           get subtotal() { return $store.cart.subtotal; },
@@ -43,7 +48,8 @@
       </div>
       <h1 style="margin:0 0 8px;font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:700;letter-spacing:-.02em">إتمام الطلب</h1>
       <p style="margin:0 0 clamp(28px,4vw,44px);font-size:15px;line-height:1.85;color:#3A483D;font-weight:300">
-        لا تحتاج إلى إنشاء حساب — املأ بياناتك وسنتواصل معك لتأكيد الطلب. الدفع عند الاستلام.
+        لا تحتاج إلى إنشاء حساب — املأ بياناتك وسنتواصل معك لتأكيد الطلب.
+        {{ $onlinePaymentAvailable ? 'ادفع عند الاستلام أو إلكترونياً بالبطاقة أو المحفظة.' : 'الدفع عند الاستلام.' }}
       </p>
 
       @if (session('cart_error'))
@@ -58,7 +64,8 @@
         </div>
       </template>
 
-      <form method="POST" action="{{ route('checkout.store') }}" x-show="!$store.cart.isEmpty" x-cloak class="co-grid" style="display:grid;grid-template-columns:1.35fr .85fr;gap:clamp(22px,3vw,44px);align-items:start">
+      <form method="POST" action="{{ route('checkout.store') }}" x-show="!$store.cart.isEmpty" x-cloak class="co-grid" style="grid-template-columns:1.35fr .85fr;gap:clamp(22px,3vw,44px);align-items:start"
+            @submit="if (submitting) { $event.preventDefault(); } submitting = true">
         @csrf
 
         <div style="display:flex;flex-direction:column;gap:22px">
@@ -134,17 +141,33 @@
               <span style="width:26px;height:26px;border-radius:50%;background:#0E2A1B;color:#F5EBD8;font-size:13px;display:grid;place-items:center;font-weight:700">٣</span>
               طريقة الدفع
             </h2>
-            {{-- COD is the only method available right now. It is rendered as a
-                 checked, disabled radio so the UI is already shaped for adding
-                 online payment later without a redesign. --}}
-            <label style="display:flex;align-items:flex-start;gap:14px;padding:18px;border:2px solid #176B3A;border-radius:3px;background:rgba(23,107,58,.05);cursor:default">
-              <input type="radio" name="paymentMethod" value="cod" checked style="margin-top:3px;accent-color:#176B3A;width:18px;height:18px">
-              <span>
-                <span style="display:block;font-size:15px;font-weight:700;margin-bottom:4px">الدفع عند الاستلام</span>
-                <span style="display:block;font-size:13.5px;line-height:1.75;color:#3A483D;font-weight:300">تدفع نقداً للمندوب وقت تسليم الطلب. لا حاجة لأي بيانات بنكية.</span>
-              </span>
-            </label>
-            <p style="margin:14px 0 0;font-size:12.5px;color:#6B4630;line-height:1.7">الدفع الإلكتروني غير متاح حالياً وسيُضاف لاحقاً.</p>
+            {{-- The server re-validates the choice: Paymob is accepted only while
+                 it is fully configured (StoreOrderRequest). --}}
+            <div class="pay-options" role="radiogroup" aria-label="طريقة الدفع">
+              <label class="pay-opt" :class="payment === 'cod' && 'is-on'">
+                <input type="radio" name="payment_method" value="cod" x-model="payment">
+                <span>
+                  <span class="pay-opt__title">الدفع عند الاستلام</span>
+                  <span class="pay-opt__desc">تدفع نقداً للمندوب وقت تسليم الطلب. لا حاجة لأي بيانات بنكية.</span>
+                </span>
+              </label>
+
+              @if ($onlinePaymentAvailable)
+                <label class="pay-opt" :class="payment === 'paymob' && 'is-on'">
+                  <input type="radio" name="payment_method" value="paymob" x-model="payment">
+                  <span>
+                    <span class="pay-opt__title">الدفع الإلكتروني عبر Paymob (بطاقات بنكية ومحافظ إلكترونية)</span>
+                    <span class="pay-opt__desc">فيزا، ماستركارد، ميزة، أو محفظة فودافون كاش / أورانج كاش / اتصالات كاش. ستنتقل إلى صفحة الدفع الآمنة من Paymob ثم تعود إلى المتجر.</span>
+                  </span>
+                </label>
+              @endif
+            </div>
+            @error('payment_method')
+              <p style="margin:12px 0 0;font-size:12.5px;color:#B04A4A;font-weight:500">{{ $message }}</p>
+            @enderror
+            @unless ($onlinePaymentAvailable)
+              <p style="margin:14px 0 0;font-size:12.5px;color:#6B4630;line-height:1.7">الدفع الإلكتروني غير متاح حالياً.</p>
+            @endunless
           </div>
         </div>
 
@@ -153,6 +176,8 @@
 
           <div style="display:flex;flex-direction:column;gap:16px;max-height:340px;overflow-y:auto;padding-inline-end:4px">
             <template x-for="l in $store.cart.lines" :key="l.id">
+              {{-- The line total sits in the controls row and wraps under them
+                   on a phone, instead of squeezing the name into a sliver. --}}
               <div style="display:flex;gap:12px;align-items:flex-start">
                 <div style="position:relative;flex:0 0 62px;width:62px;height:62px;background:#F5EBD8;border-radius:3px">
                   <img :src="l.image" :alt="l.name" style="position:absolute;inset:0;margin:auto;width:78%;height:78%;object-fit:contain">
@@ -160,14 +185,14 @@
                 <div style="flex:1;min-width:0">
                   <p style="margin:0 0 3px;font-size:14px;font-weight:600;line-height:1.5" x-text="l.name"></p>
                   <p style="margin:0 0 8px;font-size:12.5px;color:#6B4630" x-text="NB.fmt(l.price) + ' × ' + l.qty"></p>
-                  <div style="display:flex;align-items:center;gap:7px">
+                  <div class="co-line-ctl">
                     <button type="button" class="qbtn" @click="$store.cart.dec(l)" :disabled="l.qty <= 1" aria-label="إنقاص">−</button>
                     <span style="min-width:24px;text-align:center;font-size:14px;font-weight:600" x-text="l.qty"></span>
                     <button type="button" class="qbtn" @click="$store.cart.inc(l)" :disabled="l.qty >= l.stock" aria-label="زيادة">+</button>
-                    <button type="button" @click="$store.cart.remove(l)" style="margin-inline-start:6px;border:0;background:none;cursor:pointer;font-size:12.5px;color:#B04A4A;text-decoration:underline">حذف</button>
+                    <button type="button" class="co-remove" @click="$store.cart.remove(l)">حذف</button>
+                    <p class="co-line-total" x-text="NB.fmt(l.line_total)"></p>
                   </div>
                 </div>
-                <p style="margin:0;font-size:14.5px;font-weight:700;white-space:nowrap" x-text="NB.fmt(l.line_total)"></p>
               </div>
             </template>
           </div>
@@ -191,12 +216,25 @@
             <p style="margin:16px 0 0;padding:12px 14px;background:#FFF2F2;border:1px solid #E9C7C7;border-radius:3px;font-size:13px;color:#B04A4A;line-height:1.7">من فضلك راجع الحقول المميزة بالأحمر أعلاه.</p>
           @endif
 
-          <button type="submit" class="btn-place" style="margin-top:18px">تأكيد الطلب — الدفع عند الاستلام</button>
+          <button type="submit" class="btn-place" style="margin-top:18px" :disabled="submitting"
+                  x-text="payment === 'paymob' ? 'المتابعة للدفع الآمن عبر Paymob' : 'تأكيد الطلب — الدفع عند الاستلام'">تأكيد الطلب — الدفع عند الاستلام</button>
 
           <p style="margin:14px 0 0;font-size:12.5px;color:#6B4630;line-height:1.75;text-align:center">
             بتأكيد الطلب أنت توافق على سياسة الشحن والاسترجاع.
           </p>
         </aside>
+
+        {{-- Phones only: the summary sits below a long form there, so the total
+             and the submit button stay within thumb reach. Same form, so it
+             submits exactly what the main button does. --}}
+        <div class="co-mobilebar" role="region" aria-label="إجمالي الطلب">
+          <div style="min-width:0">
+            <span style="display:block;font-size:12px;color:#6B4630">الإجمالي</span>
+            <span style="display:block;font-size:18px;font-weight:700;color:#176B3A;white-space:nowrap" x-text="fmt(total)"></span>
+          </div>
+          <button type="submit" class="btn-place" :disabled="submitting"
+                  x-text="payment === 'paymob' ? 'ادفع الآن' : 'تأكيد الطلب'">تأكيد الطلب</button>
+        </div>
       </form>
     </section>
   </main>
