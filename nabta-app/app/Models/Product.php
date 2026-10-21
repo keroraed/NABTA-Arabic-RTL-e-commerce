@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
@@ -15,7 +16,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'slug', 'legacy_id', 'sku', 'category_id',
+        'slug', 'legacy_id', 'sku', 'category_id', 'brand_id',
         'name_ar', 'short_desc_ar', 'description_ar', 'ingredients_ar', 'usage_ar',
         'weight_label', 'price', 'compare_at_price', 'currency',
         'is_active', 'is_featured', 'sort_order',
@@ -40,9 +41,24 @@ class Product extends Model
         ];
     }
 
+    /**
+     * The PRIMARY category: the label on product cards, the related-products
+     * rail and the POS tile. Always also present in categories().
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** Every category (and subcategory) the product is filed under. */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)->withTimestamps();
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     public function images(): HasMany
@@ -68,6 +84,26 @@ class Product extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Products filed under the given category OR any of its subcategories,
+     * through the pivot. Choosing "أعشاب" should also show what is filed only
+     * under "أعشاب › شاي".
+     */
+    public function scopeInCategory(Builder $query, Category|int $category): Builder
+    {
+        $category = $category instanceof Category ? $category : Category::query()->findOrFail($category);
+
+        return $query->whereHas(
+            'categories',
+            fn (Builder $q) => $q->whereIn('categories.id', $category->selfAndDescendantIds()),
+        );
+    }
+
+    public function scopeOfBrand(Builder $query, Brand|int $brand): Builder
+    {
+        return $query->where('brand_id', $brand instanceof Brand ? $brand->id : $brand);
     }
 
     /* ---------------------------------------------------------------------
@@ -118,6 +154,27 @@ class Product extends Model
 
     protected static function booted(): void
     {
+        // The primary category is always one of the product's categories, so
+        // filtering through the pivot never misses a product. Changing the
+        // primary MOVES the product: the old primary is detached, any additional
+        // categories are left alone. (The admin form re-syncs the full list
+        // right after this, so an admin can still keep the old one on purpose.)
+        static::saved(function (self $product) {
+            if (! $product->category_id || ! ($product->wasRecentlyCreated || $product->wasChanged('category_id'))) {
+                return;
+            }
+
+            // getPrevious(), not wasRecentlyCreated: the latter stays true for the
+            // whole life of an instance, so a create-then-update would miss it.
+            $previous = $product->wasChanged('category_id') ? ($product->getPrevious()['category_id'] ?? null) : null;
+
+            if ($previous && (int) $previous !== (int) $product->category_id) {
+                $product->categories()->detach($previous);
+            }
+
+            $product->categories()->syncWithoutDetaching([$product->category_id]);
+        });
+
         static::saved(function (self $product) {
             if ($product->pendingStockCount === null) {
                 return;

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
@@ -25,7 +27,7 @@ class ShopController extends Controller
             'featured' => $featured,
             'bestSellers' => $this->bestSellers(),
             'tiles' => $this->shelfTiles(),
-            'categoryCount' => Category::active()->count(),
+            'categoryCount' => Category::active()->roots()->count(),
             'cardArt' => fn (Product $p) => $this->art('cards', 'card_default', $p),
             'bestArt' => fn (Product $p) => $this->art('best', 'best_default', $p),
         ]);
@@ -78,10 +80,27 @@ class ShopController extends Controller
 
     public function categories(): View
     {
-        $categories = Category::active()
-            ->withCount(['products' => fn ($q) => $q->active()])
-            ->orderBy('sort_order')
-            ->get();
+        // Top-level categories only; subcategories are reached from the shop
+        // filters. Each card counts its subcategories' products too, which is
+        // what the card's link (/shop?cat=…) will actually list. One query for
+        // the whole page rather than one per card.
+        $all = Category::active()->orderBy('sort_order')->get();
+
+        $filed = DB::table('category_product')
+            ->join('products', 'products.id', '=', 'category_product.product_id')
+            ->where('products.is_active', true)
+            ->get(['category_product.product_id', 'category_product.category_id'])
+            ->groupBy('category_id')
+            ->map(fn ($rows) => $rows->pluck('product_id'));
+
+        $categories = $all->whereNull('parent_id')->values()->each(function (Category $root) use ($all, $filed) {
+            $ids = $all->where('parent_id', $root->id)->pluck('id')->push($root->id);
+
+            $root->setAttribute(
+                'products_count',
+                $ids->flatMap(fn ($id) => $filed->get($id, collect()))->unique()->count(),
+            );
+        });
 
         // Each card is fronted by one product's photo, named in the art config.
         $heroes = Product::query()
@@ -108,23 +127,46 @@ class ShopController extends Controller
         ]);
     }
 
+    /**
+     * /shop?cat=<slug>&brand=<slug>. `cat` may be a top-level category (which
+     * includes everything in its subcategories) or a subcategory.
+     */
     public function index(Request $request): View
     {
-        $categories = Category::active()->orderBy('sort_order')->get();
+        $all = Category::active()->orderBy('sort_order')->get();
+        $roots = $all->whereNull('parent_id')->values();
 
-        $slug = $request->query('cat');
-        $active = $categories->firstWhere('slug', $slug);
+        $active = $all->firstWhere('slug', $request->query('cat'));
+
+        // The subcategory row belongs to whichever top-level category is in
+        // play: the selected one, or the parent of a selected subcategory.
+        $activeRoot = $active?->parent_id ? $all->firstWhere('id', $active->parent_id) : $active;
+        $subcategories = $activeRoot ? $all->where('parent_id', $activeRoot->id)->values() : collect();
+
+        // Brands are offered only when at least one active product carries one,
+        // so the filter row never appears empty.
+        $brands = Brand::active()
+            ->whereHas('products', fn ($q) => $q->active())
+            ->orderBy('sort_order')
+            ->get();
+
+        $activeBrand = $brands->firstWhere('slug', $request->query('brand'));
 
         $products = Product::active()
-            ->with('images', 'category')
-            ->when($active, fn ($q) => $q->where('category_id', $active->id))
+            ->with('images', 'category', 'brand')
+            ->when($active, fn ($q) => $q->inCategory($active))
+            ->when($activeBrand, fn ($q) => $q->ofBrand($activeBrand))
             ->orderBy('sort_order')
             ->get();
 
         return view('storefront.shop', [
-            'categories' => $categories,
+            'categories' => $roots,
+            'subcategories' => $subcategories,
+            'brands' => $brands,
             'products' => $products,
             'activeCategory' => $active,
+            'activeRoot' => $activeRoot,
+            'activeBrand' => $activeBrand,
         ]);
     }
 
@@ -132,7 +174,7 @@ class ShopController extends Controller
     {
         abort_unless($product->is_active, 404);
 
-        $product->load('images', 'category');
+        $product->load('images', 'category.parent', 'brand');
 
         // Prefer same-category products, then top up from the rest of the
         // catalogue so the rail is never half-empty on a thin category.

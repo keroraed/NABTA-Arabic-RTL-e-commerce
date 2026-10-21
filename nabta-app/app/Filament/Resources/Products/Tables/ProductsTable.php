@@ -42,6 +42,19 @@ class ProductsTable
                     ->badge()
                     ->sortable(),
 
+                TextColumn::make('categories.name_ar')
+                    ->label(__('كل الأقسام'))
+                    ->badge()
+                    ->color('gray')
+                    ->limitList(3)
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('brand.name_ar')
+                    ->label(__('العلامة التجارية'))
+                    ->placeholder('—')
+                    ->sortable()
+                    ->toggleable(),
+
                 TextColumn::make('price')
                     ->label(__('السعر'))
                     ->numeric(decimalPlaces: 0)
@@ -68,9 +81,17 @@ class ProductsTable
                 ToggleColumn::make('is_featured')->label(__('مميز')),
             ])
             ->filters([
-                SelectFilter::make('category_id')
+                // Through the pivot, so it finds products filed under a
+                // category as well as those whose primary category it is.
+                SelectFilter::make('categories')
                     ->label(__('القسم'))
-                    ->relationship('category', 'name_ar')
+                    ->relationship('categories', 'name_ar')
+                    ->searchable()
+                    ->preload(),
+
+                SelectFilter::make('brand_id')
+                    ->label(__('العلامة التجارية'))
+                    ->relationship('brand', 'name_ar')
                     ->searchable()
                     ->preload(),
 

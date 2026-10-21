@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\DB;
  * Stock leaves through the movement ledger, not a column decrement, so an online
  * order and a POS sale are the same kind of event against the same warehouse
  * balance. The storefront draws from the warehouse flagged `is_online_fulfilment`.
+ *
+ * Both payment methods take stock the same way at placement. A COD order is
+ * then simply pending its confirmation call; a Paymob order waits in
+ * pending_payment, holding its stock, until OrderPaymentSettler hears back
+ * from Paymob and either confirms it or releases the stock.
  */
 class OrderPlacer
 {
@@ -28,10 +33,11 @@ class OrderPlacer
         private readonly ShippingCalculator $shipping,
         private readonly OrderNumberGenerator $numbers,
         private readonly StockLedger $stock,
+        private readonly AdminOrderNotifier $notifier,
     ) {}
 
     /**
-     * @param  array{customer_name:string,customer_phone:string,customer_alt_phone:?string,governorate_id:int,city:string,address_line:string,landmark:?string,notes:?string,ip_address:?string}  $data
+     * @param  array{customer_name:string,customer_phone:string,customer_alt_phone:?string,governorate_id:int,city:string,address_line:string,landmark:?string,notes:?string,ip_address:?string,payment_method?:string}  $data
      *
      * @throws CartChangedException when the cart no longer reflects what the
      *         customer saw — an item sold out or was deactivated mid-checkout.
@@ -50,8 +56,11 @@ class OrderPlacer
 
         $governorate = Governorate::active()->findOrFail($data['governorate_id']);
         $warehouse = Warehouse::onlineFulfilment();
+        $paymentMethod = ($data['payment_method'] ?? Order::PAYMENT_COD) === Order::PAYMENT_PAYMOB
+            ? Order::PAYMENT_PAYMOB
+            : Order::PAYMENT_COD;
 
-        return DB::transaction(function () use ($wanted, $governorate, $data, $warehouse) {
+        $order = DB::transaction(function () use ($wanted, $governorate, $data, $warehouse, $paymentMethod) {
             $subtotal = 0.0;
             $items = [];
             $movements = [];
@@ -101,8 +110,11 @@ class OrderPlacer
 
             $order = Order::create([
                 'order_number' => $this->numbers->next(),
-                'status' => Order::STATUS_PENDING,
-                'payment_method' => 'cod',
+                'status' => $paymentMethod === Order::PAYMENT_PAYMOB
+                    ? Order::STATUS_PENDING_PAYMENT
+                    : Order::STATUS_PENDING,
+                'payment_method' => $paymentMethod,
+                'payment_status' => Order::PAYMENT_UNPAID,
                 'channel' => 'web',
                 'customer_name' => $data['customer_name'],
                 'customer_phone' => $data['customer_phone'],
@@ -139,6 +151,14 @@ class OrderPlacer
 
             return $order;
         });
+
+        // A Paymob order is not a sale yet; the shop hears about it once the
+        // payment is confirmed (OrderPaymentSettler::markPaid).
+        if ($paymentMethod === Order::PAYMENT_COD) {
+            $this->notifier->notify($order);
+        }
+
+        return $order;
     }
 
     /** Whole numbers read better than "3.000 فقط" in a customer-facing message. */

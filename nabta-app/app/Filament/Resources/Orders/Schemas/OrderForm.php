@@ -34,6 +34,30 @@ class OrderForm
                         TextEntry::make('placed_at')->label(__('تاريخ الطلب'))->dateTime('Y/m/d H:i'),
                     ]),
 
+                Section::make(__('الدفع'))
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('payment_method')
+                            ->label(__('طريقة الدفع'))
+                            ->formatStateUsing(fn (Order $record) => __($record->paymentMethodLabel())),
+                        TextEntry::make('payment_status')
+                            ->label(__('حالة الدفع'))
+                            ->badge()
+                            ->color(fn (Order $record) => $record->isPaid() ? 'success' : ($record->payment_status === Order::PAYMENT_FAILED ? 'danger' : 'gray'))
+                            ->formatStateUsing(fn (Order $record) => __($record->paymentStatusLabel())),
+                        TextEntry::make('paid_at')->label(__('تاريخ الدفع'))->dateTime('Y/m/d H:i')->placeholder('—'),
+                        TextEntry::make('paymob_order_id')
+                            ->label(__('رقم الطلب في Paymob'))
+                            ->copyable()
+                            ->placeholder('—')
+                            ->visible(fn (Order $record) => $record->isPaymob()),
+                        TextEntry::make('paymob_transaction_id')
+                            ->label(__('رقم العملية في Paymob'))
+                            ->copyable()
+                            ->placeholder('—')
+                            ->visible(fn (Order $record) => $record->isPaymob()),
+                    ]),
+
                 Section::make(__('العميل'))
                     ->columns(3)
                     ->schema([

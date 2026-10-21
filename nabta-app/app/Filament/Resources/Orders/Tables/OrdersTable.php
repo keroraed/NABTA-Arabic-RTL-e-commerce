@@ -53,7 +53,19 @@ class OrdersTable
                         Order::STATUS_CONFIRMED => 'info',
                         Order::STATUS_SHIPPED => 'primary',
                         Order::STATUS_DELIVERED => 'success',
-                        Order::STATUS_CANCELLED, Order::STATUS_RETURNED => 'danger',
+                        Order::STATUS_CANCELLED, Order::STATUS_RETURNED, Order::STATUS_FAILED_PAYMENT => 'danger',
+                        default => 'gray',
+                    }),
+
+                TextColumn::make('payment_status')
+                    ->label(__('الدفع'))
+                    ->badge()
+                    ->formatStateUsing(fn (Order $record) => __($record->paymentStatusLabel()))
+                    ->description(fn (Order $record) => __($record->paymentMethodLabel()))
+                    ->color(fn (Order $record) => match (true) {
+                        $record->isPaid() => 'success',
+                        $record->payment_status === Order::PAYMENT_FAILED => 'danger',
+                        $record->isPaymob() => 'warning',
                         default => 'gray',
                     }),
 
@@ -67,6 +79,10 @@ class OrdersTable
                     ->label(__('الحالة'))
                     ->options(collect(Order::STATUS_LABELS)->map(fn ($l) => __($l))->all())
                     ->multiple(),
+
+                SelectFilter::make('payment_method')
+                    ->label(__('طريقة الدفع'))
+                    ->options(collect(Order::PAYMENT_METHOD_LABELS)->map(fn ($l) => __($l))->all()),
 
                 SelectFilter::make('governorate_id')
                     ->label(__('المحافظة'))

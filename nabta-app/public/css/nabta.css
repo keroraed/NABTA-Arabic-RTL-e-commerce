@@ -203,7 +203,10 @@ input,button{font-family:inherit}
 
 /* Toast — from the shop/PDP prototypes, which each defined it inline. */
 .nb-toast {
-  position: fixed; inset-inline-start: 50%; bottom: 26px; z-index: 120;
+  /* Physical `left`, not inset-inline-start: centring is direction-agnostic,
+     and in RTL inset-inline-start:50% means right:50%, which this
+     translateX(-50%) then pushes off-centre. */
+  position: fixed; left: 50%; bottom: 26px; z-index: 120;
   transform: translateX(-50%) translateY(140%);
   background: #0E2A1B; color: #F5EBD8; font-size: 14px; font-weight: 500;
   padding: 14px 26px; border-radius: 9999px;
@@ -214,3 +217,88 @@ input,button{font-family:inherit}
 .nb-toast[data-show="true"] { transform: translateX(-50%) translateY(0); }
 
 [x-cloak] { display: none !important; }
+
+/* --- 7. shop filters ------------------------------------------------------
+   Three chip rows (categories, subcategories, brands). They wrap on wide
+   screens and become one horizontally scrolling line each on phones, so a long
+   list of subcategories does not push the products off the first screen. */
+.shop-filters { display: flex; flex-direction: column; gap: 12px; }
+.chip-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; justify-content: center; }
+.chip-row--sub .chip { background: #F5EBD8; border-color: transparent; font-weight: 500; }
+.chip-row--sub .chip[aria-pressed="true"] { background: #176B3A; border-color: #176B3A; color: #FCFAF5; }
+.chip-row__label { font-size: 13px; color: #6B4630; white-space: nowrap; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: clamp(16px, 2vw, 28px); }
+
+/* --- 8. checkout payment + summary --------------------------------------- */
+/* display:grid lives here, not inline on the form: Alpine's x-show removes the
+   inline `display` when it shows an element, which silently collapsed the
+   two-column desktop checkout into one column. */
+.co-grid { display: grid; }
+.pay-options { display: flex; flex-direction: column; gap: 12px; }
+.pay-opt { display: flex; align-items: flex-start; gap: 14px; padding: 18px; border: 2px solid rgba(14,42,27,.14); border-radius: 3px; background: #fff; cursor: pointer; transition: border-color .2s ease, background .2s ease; }
+.pay-opt:hover { border-color: rgba(23,107,58,.5); }
+.pay-opt.is-on { border-color: #176B3A; background: rgba(23,107,58,.05); }
+.pay-opt input { flex: 0 0 auto; margin: 3px 0 0; width: 20px; height: 20px; accent-color: #176B3A; }
+.pay-opt__title { display: block; font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.6; }
+.pay-opt__desc { display: block; font-size: 13.5px; line-height: 1.75; color: #3A483D; font-weight: 300; }
+.co-line-ctl { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.co-remove { margin-inline-start: 6px; border: 0; background: none; cursor: pointer; font-size: 12.5px; color: #B04A4A; text-decoration: underline; padding: 0 4px; min-height: 34px; }
+.co-line-total { margin: 0; margin-inline-start: auto; font-size: 14.5px; font-weight: 700; white-space: nowrap; }
+.co-mobilebar { display: none; }
+
+/* --- 9. responsive polish -------------------------------------------------
+   Breakpoints: phones up to 480px, tablets 768–1024px, desktop above. */
+
+/* Nothing on any page may widen the viewport. `clip` (not `hidden`) so the
+   sticky checkout summary keeps working: it does not create a scroll box. */
+html, body { overflow-x: clip; }
+
+/* Touch targets: 44×44px minimum on touch screens and phones (WCAG 2.5.5). */
+@media (max-width: 900px), (pointer: coarse) {
+  .chip { min-height: 44px; }
+  .qbtn { width: 44px; height: 44px; font-size: 18px; touch-action: manipulation; }
+  .co-remove { min-height: 44px; min-width: 44px; padding: 0 8px; }
+  .thumb { min-width: 56px; min-height: 56px; }
+  .acc-head { min-height: 52px; }
+}
+
+/* Tablets: the PDP stacks below 900px; give the gallery a sensible cap so a
+   square image on a 1024×768 landscape tablet does not fill two screens. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .pdp-grid { gap: 32px !important; }
+  .pdp-grid > div:first-child { max-width: 640px; width: 100%; margin-inline: auto; }
+}
+
+/* Phones and small tablets: each filter row scrolls sideways, bleeding to the
+   screen edge so it is obvious there is more. */
+@media (max-width: 767px) {
+  .chip-row {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    margin-inline: calc(-1 * clamp(16px, 4vw, 60px));
+    padding-inline: clamp(16px, 4vw, 60px);
+    scroll-padding-inline: clamp(16px, 4vw, 60px);
+  }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip { flex: 0 0 auto; }
+}
+
+/* Checkout below the single-column breakpoint: a fixed total + submit bar. */
+@media (max-width: 980px) {
+  .co-mobilebar {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 12px clamp(16px, 4vw, 44px) calc(12px + env(safe-area-inset-bottom, 0px));
+    background: rgba(252,250,245,.97); backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(14,42,27,.1); box-shadow: 0 -8px 24px rgba(14,42,27,.08);
+  }
+  .co-mobilebar .btn-place { width: auto; flex: 0 1 220px; min-height: 52px; padding: 14px 22px; font-size: 15px; }
+  .co-page { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (max-width: 480px) {
+  .pay-opt { padding: 14px; gap: 12px; }
+  .co-line-total { width: 100%; margin-inline-start: 0; }
+  .nb-toast { max-width: calc(100vw - 32px); text-align: center; }
+}

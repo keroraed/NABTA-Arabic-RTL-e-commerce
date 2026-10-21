@@ -47,7 +47,7 @@
     </section>
 
     <main style="max-width:1560px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(16px,4vw,60px)">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:clamp(20px,2.5vw,36px)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(310px,100%),1fr));gap:clamp(20px,2.5vw,36px)">
 
         @foreach ($categories as $c)
           @php($art = $cardArt($c))

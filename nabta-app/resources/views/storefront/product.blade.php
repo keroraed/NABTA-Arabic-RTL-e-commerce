@@ -17,7 +17,7 @@
        leading "at" of the schema.org "context" / "type" keys as directives and
        mangles the array literal. --}}
   @php
-      $jsonLd = json_encode([
+      $jsonLd = json_encode(array_filter([
           '@context' => 'https://schema.org',
           '@type' => 'Product',
           'name' => $product->name_ar,
@@ -25,6 +25,7 @@
           'sku' => $product->sku,
           'image' => $product->images->map(fn ($i) => $i->url)->all(),
           'category' => $product->category?->name_ar,
+          'brand' => $product->brand ? ['@type' => 'Brand', 'name' => $product->brand->name_ar] : null,
           'offers' => [
               '@type' => 'Offer',
               'url' => route('products.show', $product),
@@ -34,7 +35,7 @@
                   ? 'https://schema.org/OutOfStock'
                   : 'https://schema.org/InStock',
           ],
-      ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+      ], fn ($v) => $v !== null), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
   @endphp
   <script type="application/ld+json">{!! $jsonLd !!}</script>
 @endpush
@@ -49,6 +50,9 @@
       <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6B4630;flex-wrap:wrap">
         <a href="{{ route('home') }}" style="opacity:.8;color:inherit">الرئيسية</a><span>/</span>
         <a href="{{ route('shop') }}" style="opacity:.8;color:inherit">المنتجات</a><span>/</span>
+        @if ($product->category?->parent)
+          <a href="{{ route('shop', ['cat' => $product->category->parent->slug]) }}" style="opacity:.8;color:inherit">{{ $product->category->parent->name_ar }}</a><span>/</span>
+        @endif
         <a href="{{ route('shop', ['cat' => $product->category?->slug]) }}" style="opacity:.8;color:inherit">{{ $product->category?->name_ar }}</a><span>/</span>
         <span style="color:#176B3A;font-weight:600">{{ $product->name_ar }}</span>
       </div>
@@ -76,7 +80,13 @@
         </div>
 
         <div>
-          <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;color:#6B4630;font-weight:500">{{ $product->category?->name_ar }}</p>
+          <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;color:#6B4630;font-weight:500">
+            {{ $product->category?->name_ar }}
+            @if ($product->brand?->is_active)
+              <span style="opacity:.4">·</span>
+              <a href="{{ route('shop', ['brand' => $product->brand->slug]) }}" style="color:inherit;text-decoration:underline;text-underline-offset:4px">{{ $product->brand->name_ar }}</a>
+            @endif
+          </p>
           <h1 style="margin:0;font-size:clamp(1.8rem,3.6vw,2.9rem);line-height:1.25;font-weight:700;letter-spacing:-.02em">{{ $product->name_ar }}</h1>
           <p style="margin:16px 0 0;font-size:clamp(1.5rem,2.6vw,2rem);font-weight:700;color:#176B3A">{{ number_format($product->price, 0) }} ج.م</p>
           <p style="margin:20px 0 0;font-size:15px;line-height:1.95;color:#3A483D;font-weight:300">{{ $product->description_ar }}</p>
